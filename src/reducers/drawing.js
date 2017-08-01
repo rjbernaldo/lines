@@ -1,4 +1,4 @@
-// import { LOGIN, LOGOUT } from '../actions/credentials';
+// import { LOGIN, LOGOUT } from '../actions/drawing';
 
 const initialState = {
 };
