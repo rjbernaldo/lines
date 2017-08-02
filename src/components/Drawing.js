@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import * as d3 from 'd3';
+
+import Anchor from './DrawingElements/Anchor.js'
 
 class Drawing extends React.Component {
   constructor(props) {
@@ -11,95 +12,61 @@ class Drawing extends React.Component {
     this.handleDrag = this.handleDrag(this);
 
     this.state = {
-      drawing: null,
-      line: null
+      points: {
+        a: { name: 'A', x: 100, y: 350, prev: null, next: 'b' },
+        b: { name: 'B', x: 250, y: 50, prev: 'a', next: 'c' },
+        c: { name: 'C', x: 400, y: 350, prev: 'b', next: null },
+      },
     };
   }
 
   componentDidMount() {
-    const drawing = d3.select('#drawing')
-      .append('svg')
-      .attr('width', 500)
-      .attr('height', 500)
-      .on('mousedown', this.handleMouseDown)
-      .on('mouseup', this.handleMouseUp)
-      .on('drag', this.handleDrag);
-
-    this.setState({ drawing });
   }
 
-  handleMouseDown(component) {
-    return function () {
-      const d = component.state.drawing;
-      const m = d3.mouse(this);
-
-      const circle = d.append('circle')
-        .attr('cx', m[0])
-        .attr('cy', m[1])
-        .attr('r', 3);
-
-      const line = d.append('line')
-        .attr('x1', m[0])
-        .attr('y1', m[1])
-        .attr('x2', m[0])
-        .attr('y2', m[1])
-        .attr('stroke-width', 2)
-        .attr('stroke', 'black')
-        .call(component.handleDrag);
-
-      component.setState({ line });
-
-      d.on('mousemove', component.handleMouseMove);
-    };
+  handleMouseDown() {
   }
 
-  handleMouseUp(component) {
-    return function () {
-      const d = component.state.drawing;
-      const m = d3.mouse(this);
-
-      d.on('mousemove', null);
-
-      const circle = d.append('circle')
-        .attr('cx', m[0])
-        .attr('cy', m[1])
-        .attr('r', 3);
-    };
+  handleMouseUp() {
   }
 
-  handleMouseMove(component) {
-    return function () {
-      const m = d3.mouse(this);
-
-      component.state.line
-        .attr('x2', m[0])
-        .attr('y2', m[1]);
-    };
+  handleMouseMove() {
   }
 
-  handleDrag(component) {
-    return d3.drag()
-      .on('start', null)
-      .on('drag', function (d) {
-        const dx = d3.event.dx;
-        const dy = d3.event.dy;
-        const current = d3.select(this);
-        const x1 = parseFloat(current.attr('x1')) + dx;
-        const y1 = parseFloat(current.attr('y1')) + dy;
-        const x2 = parseFloat(current.attr('x2')) + dx;
-        const y2 = parseFloat(current.attr('y2')) + dy;
-
-        component.state.line
-          .attr('x1', x1)
-          .attr('y1', y1)
-          .attr('x2', x2)
-          .attr('y2', y2);
-      });
+  handleDrag() {
   }
 
   render() {
     return (
-      <div id="drawing" style={{ height: '500px', width: '500px' }} />
+      <svg height="400" width="450">
+        {/* { 
+           this.state.points.map((p, i) => {
+            const next = this.state.points[i + 1];
+
+            if (!next) return null;
+
+            return <path d={`M${p.x} ${p.y} L${next.x} ${next.y}`} stroke="red" strokeWidth="3" fill="none" />;
+          }) 
+        } */}
+
+        <g stroke="black" strokeWidth="3" fill="black">
+          { 
+            Object
+              .keys(this.state.points)
+              .map((k) => {
+                const points = this.state.points;
+                const { x, y } = points[k];
+
+                return (
+                  <Anchor x={x} y={y} />
+                );
+              })
+          }
+        </g>
+
+        {/* <g fontSize="30" fill="black" stroke="none" textAnchor="middle">
+          { this.state.points.map(p => <text x={p.x} y={p.y} dx="-15">{p.name}</text>) }
+        </g> */}
+      </svg>
     );
   }
 }
