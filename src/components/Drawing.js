@@ -102,7 +102,7 @@ class Drawing extends React.Component {
         }
 
         <g stroke="black" strokeWidth="3" fill="black">
-          { 
+          {
             Object
               .keys(this.state.points)
               .map((k) => {
