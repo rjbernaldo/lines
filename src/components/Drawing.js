@@ -12,9 +12,9 @@ class Drawing extends React.Component {
 
     this.state = {
       points: {
-        0: { x: 100, y: 350, prev: null, next: 1 },
-        1: { x: 250, y: 50, prev: 0, next: 2 },
-        2: { x: 400, y: 350, prev: 1 },
+        // 0: { x: 100, y: 350, prev: null, next: 1 },
+        // 1: { x: 250, y: 50, prev: 0, next: 2 },
+        // 2: { x: 400, y: 350, prev: 1 },
       },
     };
   }
@@ -38,13 +38,15 @@ class Drawing extends React.Component {
       };
 
       this.setState({ points: current }, () => {
-        this.setState({
-          points: update(this.state.points, {
-            [prev]: {
-              next: { $set: nextKey },
-            },
-          }),
-        });
+        if (prev > -1) {
+          this.setState({
+            points: update(this.state.points, {
+              [prev]: {
+                next: { $set: nextKey },
+              },
+            }),
+          });
+        }
       });
     }
   }
@@ -87,7 +89,7 @@ class Drawing extends React.Component {
               const points = this.state.points;
               const c = points[k];
 
-              if (c.next) {
+              if (c && c.next) {
                 const n = points[c.next];
 
                 return (
