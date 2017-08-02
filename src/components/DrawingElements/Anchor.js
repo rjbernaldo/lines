@@ -17,6 +17,7 @@ class Anchor extends React.Component {
 
   handleMouseDown(e) {
     this.setState({ dragging: true });
+    // console.log('test', this.props.x, this.props.y);
   }
 
   handleMouseMove(e) {
@@ -26,7 +27,9 @@ class Anchor extends React.Component {
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
-      this.setState({ x, y, });
+      this.setState({ x, y, }, () => {
+        this.props.handleMouseMove(x, y);
+      });
     }
   }
 
