@@ -12,6 +12,9 @@ class Anchor extends React.Component {
       dragging: false,
       x: this.props.x,
       y: this.props.y,
+      prev: this.props.prev,
+      next: this.props.next,
+      degrees: calculateDegrees(this.props.prev, this.props, this.props.next),
     };
   }
 
@@ -26,31 +29,66 @@ class Anchor extends React.Component {
       const dim = target.getBoundingClientRect();
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
+      const degrees = calculateDegrees(this.state.prev, this.state, this.state.next);
 
-      this.setState({ x, y, }, () => {
+      this.setState({ x, y, degrees }, () => {
         this.props.handleMouseMove(x, y);
       });
     }
   }
 
   handleMouseUp(e) {
-    this.setState({ 
+    this.setState({
       dragging: false,
     });
   }
 
   render() {
+    let text;
+
+    if (this.state.degrees) {
+      text = (
+        <text
+          x={this.state.x - 25}
+          y={this.state.y - 25}
+          fontFamily="sans-serif"
+          fontSize="12px"
+          stroke="none"
+          fill="black"
+        >
+          {this.state.degrees}
+        </text>
+      );
+    }
+    
     return (
-      <circle
-        onMouseDown={this.handleMouseDown}
-        onMouseUp={this.handleMouseUp}
-        onMouseMove={this.handleMouseMove}
-        cx={this.state.x}
-        cy={this.state.y}
-        r="3"
-      />
+      <g>
+        <circle
+          onMouseDown={this.handleMouseDown}
+          onMouseUp={this.handleMouseUp}
+          onMouseMove={this.handleMouseMove}
+          cx={this.state.x}
+          cy={this.state.y}
+          r="3"
+        />
+        { text }
+      </g>
     );
   }
 }
 
 export default Anchor;
+
+function calculateDegrees(A, B, C) {
+  if (A && B && C) {
+  console.log(A, B, C);
+    var AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
+    var BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
+    var AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
+    const angle = Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
+   console.log(angle);
+    return angle * 180 / Math.PI;
+  }
+
+  return null;
+}

@@ -36,7 +36,7 @@ class Drawing extends React.Component {
           [k]: {
             x: { $set: x },
             y: { $set: y },
-          }
+          },
         }),
       });
     };
@@ -70,13 +70,15 @@ class Drawing extends React.Component {
               .keys(this.state.points)
               .map((k) => {
                 const points = this.state.points;
-                const { x, y } = points[k];
+                const { x, y, prev, next } = points[k];
 
                 return (
                   <Anchor
                     handleMouseMove={this.handleMouseMove(points[k])}
                     x={x}
                     y={y}
+                    prev={this.state.points[prev]}
+                    next={this.state.points[next]}
                   />
                 );
               })
