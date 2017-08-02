@@ -33,6 +33,11 @@ class Drawing extends React.Component {
       const d = component.state.drawing;
       const m = d3.mouse(this);
 
+      const circle = d.append('circle')
+        .attr('cx', m[0])
+        .attr('cy', m[1])
+        .attr('r', 3);
+
       const line = d.append('line')
         .attr('x1', m[0])
         .attr('y1', m[1])
@@ -50,8 +55,15 @@ class Drawing extends React.Component {
 
   handleMouseUp(component) {
     return function () {
-      component.state.drawing
-        .on('mousemove', null);
+      const d = component.state.drawing;
+      const m = d3.mouse(this);
+
+      d.on('mousemove', null);
+
+      const circle = d.append('circle')
+        .attr('cx', m[0])
+        .attr('cy', m[1])
+        .attr('r', 3);
     };
   }
 
