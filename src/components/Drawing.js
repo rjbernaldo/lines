@@ -23,7 +23,6 @@ class Drawing extends React.Component {
   }
 
   handleMouseDown(e) {
-    console.log(e.target.tagName);
     if (e.target.tagName === 'svg') {
       const target = e.target;
       const dim = target.getBoundingClientRect();
