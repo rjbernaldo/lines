@@ -8,7 +8,10 @@ class Drawing extends React.Component {
     super(props);
 
     this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
+
+    this.anchorMouseDown = this.anchorMouseDown.bind(this);
 
     this.state = {
       points: {
@@ -20,6 +23,7 @@ class Drawing extends React.Component {
   }
 
   handleMouseDown(e) {
+    console.log(e.target.tagName);
     if (e.target.tagName === 'svg') {
       const target = e.target;
       const dim = target.getBoundingClientRect();
@@ -51,36 +55,52 @@ class Drawing extends React.Component {
     }
   }
 
-  handleMouseMove(p) {
-    return (x, y) => {
-      const points = this.state.points;
-
+  anchorMouseDown(p) {
+    return (e) => {
       let k;
       Object
-        .keys(points)
+        .keys(this.state.points)
         .forEach((key) => {
-          if (points[key] === p) {
+          if (this.state.points[key] === p) {
             k = key;
           }
         });
 
+      this.setState({ dragging: true, key: k, target: e.target.ownerSVGElement });
+    };
+  }
+
+  handleMouseUp(e) {
+    if (this.state.dragging) {
+      this.setState({ dragging: false, key: null, target: null });
+    }
+  }
+
+  handleMouseMove(e) {
+    if (this.state.dragging) {
+      const dim = this.state.target.getBoundingClientRect();
+      const x = e.clientX - dim.left;
+      const y = e.clientY - dim.top;
+
       this.setState({
         points: update(this.state.points, {
-          [k]: {
+          [this.state.key]: {
             x: { $set: x },
             y: { $set: y },
           },
         }),
       });
-    };
+    }
   }
 
   render() {
     return (
       <svg
-        height="400"
-        width="450"
+        height="1000"
+        width="1000"
         onMouseDown={this.handleMouseDown}
+        onMouseUp={this.handleMouseUp}
+        onMouseMove={this.handleMouseMove}
       >
         {
           Object
@@ -111,11 +131,12 @@ class Drawing extends React.Component {
 
                 return (
                   <Anchor
-                    handleMouseMove={this.handleMouseMove(points[k])}
+                    handleMouseDown={this.anchorMouseDown(points[k])}
                     x={x}
                     y={y}
                     prev={this.state.points[prev]}
                     next={this.state.points[next]}
+                    dragging={this.state.dragging}
                     degrees={
                       calculateDegrees(
                         this.state.points[prev],
