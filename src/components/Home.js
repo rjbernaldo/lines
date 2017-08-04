@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import GBox from 'grommet/components/Box';
-import Drawing from './Drawing';
+import Drawing from './Drawing/index';
 
 const Home = () => (
   <GBox flex="grow">

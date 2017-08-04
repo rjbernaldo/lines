@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import update from 'react-addons-update';
 
-import Anchor from './DrawingElements/Anchor';
+import Anchor from './Anchor';
 
 class Drawing extends React.Component {
   constructor(props) {
@@ -12,6 +12,8 @@ class Drawing extends React.Component {
     this.handleMouseMove = this.handleMouseMove.bind(this);
 
     this.anchorMouseDown = this.anchorMouseDown.bind(this);
+
+    this.renderAnchors = this.renderAnchors.bind(this);
 
     this.state = {
       points: {
@@ -56,16 +58,9 @@ class Drawing extends React.Component {
 
   anchorMouseDown(p) {
     return (e) => {
-      let k;
-      Object
-        .keys(this.state.points)
-        .forEach((key) => {
-          if (this.state.points[key] === p) {
-            k = key;
-          }
-        });
+      const key = Object.keys(this.state.points).filter(k => this.state.points[k] === p);
 
-      this.setState({ dragging: true, key: k, target: e.target.ownerSVGElement });
+      this.setState({ dragging: true, target: e.target.ownerSVGElement, key });
     };
   }
 
@@ -92,6 +87,27 @@ class Drawing extends React.Component {
     }
   }
 
+  renderAnchors(k, i) {
+    const points = this.state.points;
+    const { x, y, prev, next } = points[k];
+
+    return (
+      <Anchor
+        key={i}
+        x={x}
+        y={y}
+        handleMouseDown={this.anchorMouseDown(points[k])}
+        degrees={
+          calculateDegrees(
+            this.state.points[prev],
+            { x, y },
+            this.state.points[next],
+          )
+        }
+      />
+    );
+  }
+
   render() {
     return (
       <svg
@@ -104,7 +120,7 @@ class Drawing extends React.Component {
         {
           Object
             .keys(this.state.points)
-            .map((k) => {
+            .map((k, i) => {
               const points = this.state.points;
               const c = points[k];
 
@@ -112,7 +128,7 @@ class Drawing extends React.Component {
                 const n = points[c.next];
 
                 return (
-                  <path d={`M${c.x} ${c.y} L${n.x} ${n.y}`} stroke="black" strokeWidth="3" fill="none" />
+                  <path key={i} d={`M${c.x} ${c.y} L${n.x} ${n.y}`} stroke="black" strokeWidth="3" fill="none" />
                 );
               }
 
@@ -120,34 +136,11 @@ class Drawing extends React.Component {
             })
         }
 
-        <g stroke="black" strokeWidth="3" fill="black">
-          {
-            Object
-              .keys(this.state.points)
-              .map((k) => {
-                const points = this.state.points;
-                const { x, y, prev, next } = points[k];
-
-                return (
-                  <Anchor
-                    handleMouseDown={this.anchorMouseDown(points[k])}
-                    x={x}
-                    y={y}
-                    prev={this.state.points[prev]}
-                    next={this.state.points[next]}
-                    dragging={this.state.dragging}
-                    degrees={
-                      calculateDegrees(
-                        this.state.points[prev],
-                        { x, y },
-                        this.state.points[next],
-                      )
-                    }
-                  />
-                );
-              })
-          }
-        </g>
+        {
+          Object
+            .keys(this.state.points)
+            .map(this.renderAnchors)
+        }
       </svg>
     );
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-const Anchor = ({ x, y, degrees, handleMouseDown }) => {
+const Anchor = ({ x, y, handleMouseDown, degrees }) => {
   let text;
 
   if (degrees) {
@@ -24,6 +24,8 @@ const Anchor = ({ x, y, degrees, handleMouseDown }) => {
         onMouseDown={handleMouseDown}
         cx={x}
         cy={y}
+        stroke="black"
+        strokeWidth="3"
         fill="white"
         r="5"
       />
