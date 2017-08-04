@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import update from 'react-addons-update';
 
 import Anchor from './Anchor';
+import Line from './Line';
 
 class Drawing extends React.Component {
   constructor(props) {
@@ -91,33 +92,39 @@ class Drawing extends React.Component {
   renderAnchors(k, i) {
     const points = this.state.points;
     const { x, y, prev, next } = points[k];
+    const handleMouseDown = this.anchorMouseDown(points[k]);
+    const degrees = calculateDegrees(
+      this.state.points[prev],
+      { x, y },
+      this.state.points[next],
+    );
 
     return (
       <Anchor
         key={i}
         x={x}
         y={y}
-        handleMouseDown={this.anchorMouseDown(points[k])}
-        degrees={
-          calculateDegrees(
-            this.state.points[prev],
-            { x, y },
-            this.state.points[next],
-          )
-        }
+        handleMouseDown={handleMouseDown}
+        degrees={degrees}
       />
     );
   }
 
   renderLines(k, i) {
     const points = this.state.points;
-    const c = points[k];
+    const current = points[k];
 
-    if (c.next) {
-      const n = points[c.next];
+    if (current.next) {
+      const next = points[current.next];
 
       return (
-        <path key={i} d={`M${c.x} ${c.y} L${n.x} ${n.y}`} stroke="black" strokeWidth="3" fill="none" />
+        <Line
+          key={i}
+          x={current.x}
+          y={current.y}
+          nx={next.x}
+          ny={next.y}
+        />
       );
     }
 
