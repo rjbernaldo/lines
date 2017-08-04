@@ -14,6 +14,7 @@ class Drawing extends React.Component {
     this.anchorMouseDown = this.anchorMouseDown.bind(this);
 
     this.renderAnchors = this.renderAnchors.bind(this);
+    this.renderLines = this.renderLines.bind(this);
 
     this.state = {
       points: {
@@ -108,6 +109,21 @@ class Drawing extends React.Component {
     );
   }
 
+  renderLines(k, i) {
+    const points = this.state.points;
+    const c = points[k];
+
+    if (c.next) {
+      const n = points[c.next];
+
+      return (
+        <path key={i} d={`M${c.x} ${c.y} L${n.x} ${n.y}`} stroke="black" strokeWidth="3" fill="none" />
+      );
+    }
+
+    return null;
+  }
+
   render() {
     return (
       <svg
@@ -120,20 +136,7 @@ class Drawing extends React.Component {
         {
           Object
             .keys(this.state.points)
-            .map((k, i) => {
-              const points = this.state.points;
-              const c = points[k];
-
-              if (c && c.next) {
-                const n = points[c.next];
-
-                return (
-                  <path key={i} d={`M${c.x} ${c.y} L${n.x} ${n.y}`} stroke="black" strokeWidth="3" fill="none" />
-                );
-              }
-
-              return null;
-            })
+            .map(this.renderLines)
         }
 
         {
