@@ -18,11 +18,7 @@ class Drawing extends React.Component {
     this.renderLines = this.renderLines.bind(this);
 
     this.state = {
-      points: {
-        // 0: { x: 100, y: 350, prev: null, next: 1 },
-        // 1: { x: 250, y: 50, prev: 0, next: 2 },
-        // 2: { x: 400, y: 350, prev: 1 },
-      },
+      points: props.points,
     };
   }
 
