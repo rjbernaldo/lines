@@ -8,6 +8,8 @@ class Drawing extends React.Component {
   constructor(props) {
     super(props);
 
+    this.addPoint = this.props.addPoint.bind(this);
+
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -28,6 +30,8 @@ class Drawing extends React.Component {
       const dim = target.getBoundingClientRect();
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
+
+      this.addPoint(x, y);
 
       const nextKey = Object.keys(this.state.points).length;
       const prev = nextKey - 1;
