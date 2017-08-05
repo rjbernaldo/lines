@@ -93,9 +93,9 @@ class Drawing extends React.Component {
     const { x, y, prev, next } = points[k];
     const handleMouseDown = this.anchorMouseDown(points[k]);
     const degrees = calculateDegrees(
-      this.state.points[prev],
+      this.props.points[prev],
       { x, y },
-      this.state.points[next],
+      this.props.points[next],
     );
 
     return (
@@ -110,7 +110,7 @@ class Drawing extends React.Component {
   }
 
   renderLines(k, i) {
-    const points = this.state.points;
+    const points = this.props.points;
     const current = points[k];
 
     if (current.next) {
@@ -142,12 +142,12 @@ class Drawing extends React.Component {
         {
           Object
             .keys(this.props.points)
-            .map(this.renderAnchors)
+            .map(this.renderLines)
         }
         {
           Object
-            .keys(this.state.points)
-            .map(this.renderLines)
+            .keys(this.props.points)
+            .map(this.renderAnchors)
         }
       </svg>
     );
