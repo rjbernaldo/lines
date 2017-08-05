@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import update from 'react-addons-update';
 
 import Anchor from './Anchor';
 import Line from './Line';
@@ -33,28 +32,28 @@ class Drawing extends React.Component {
 
       this.addPoint(x, y);
 
-      const nextKey = Object.keys(this.state.points).length;
-      const prev = nextKey - 1;
-      const current = this.state.points;
+      // const nextKey = Object.keys(this.state.points).length;
+      // const prev = nextKey - 1;
+      // const current = this.state.points;
 
-      current[nextKey] = {
-        x,
-        y,
-        prev,
-        next: null,
-      };
+      // current[nextKey] = {
+      //   x,
+      //   y,
+      //   prev,
+      //   next: null,
+      // };
 
-      this.setState({ points: current }, () => {
-        if (prev > -1) {
-          this.setState({
-            points: update(this.state.points, {
-              [prev]: {
-                next: { $set: nextKey },
-              },
-            }),
-          });
-        }
-      });
+      // this.setState({ points: current }, () => {
+      //   if (prev > -1) {
+      //     this.setState({
+      //       points: update(this.state.points, {
+      //         [prev]: {
+      //           next: { $set: nextKey },
+      //         },
+      //       }),
+      //     });
+      //   }
+      // });
     }
   }
 
@@ -74,23 +73,23 @@ class Drawing extends React.Component {
 
   handleMouseMove(e) {
     if (this.state.dragging) {
-      const dim = this.state.target.getBoundingClientRect();
-      const x = e.clientX - dim.left;
-      const y = e.clientY - dim.top;
+      // const dim = this.state.target.getBoundingClientRect();
+      // const x = e.clientX - dim.left;
+      // const y = e.clientY - dim.top;
 
-      this.setState({
-        points: update(this.state.points, {
-          [this.state.key]: {
-            x: { $set: x },
-            y: { $set: y },
-          },
-        }),
-      });
+      // this.setState({
+      //   points: update(this.state.points, {
+      //     [this.state.key]: {
+      //       x: { $set: x },
+      //       y: { $set: y },
+      //     },
+      //   }),
+      // });
     }
   }
 
   renderAnchors(k, i) {
-    const points = this.state.points;
+    const points = this.props.points;
     const { x, y, prev, next } = points[k];
     const handleMouseDown = this.anchorMouseDown(points[k]);
     const degrees = calculateDegrees(
@@ -142,14 +141,13 @@ class Drawing extends React.Component {
       >
         {
           Object
-            .keys(this.state.points)
-            .map(this.renderLines)
+            .keys(this.props.points)
+            .map(this.renderAnchors)
         }
-
         {
           Object
             .keys(this.state.points)
-            .map(this.renderAnchors)
+            .map(this.renderLines)
         }
       </svg>
     );
