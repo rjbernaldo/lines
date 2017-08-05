@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Drawing from '../components/Drawing/index';
-// import { login, logout } from '../actions/credentials'
+import { addPoint, movePoint } from '../actions/drawing';
 
 const mapStateToProps = (state) => {
   return {
@@ -10,7 +10,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-
+    addPoint: (x, y) => {
+      dispatch(addPoint(x, y));
+    },
+    movePoint: (x, y) => {
+      dispatch(movePoint(x, y));
+    },
   };
 };
 
