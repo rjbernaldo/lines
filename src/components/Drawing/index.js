@@ -8,6 +8,7 @@ class Drawing extends React.Component {
     super(props);
 
     this.addPoint = this.props.addPoint.bind(this);
+    this.movePoint = this.props.movePoint.bind(this);
 
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
@@ -19,7 +20,9 @@ class Drawing extends React.Component {
     this.renderLines = this.renderLines.bind(this);
 
     this.state = {
-      points: props.points,
+      target: null,
+      dragging: false,
+      key: null,
     };
   }
 
@@ -59,7 +62,7 @@ class Drawing extends React.Component {
 
   anchorMouseDown(p) {
     return (e) => {
-      const key = Object.keys(this.state.points).filter(k => this.state.points[k] === p);
+      const key = Object.keys(this.props.points).filter(k => this.props.points[k] === p);
 
       this.setState({ dragging: true, target: e.target.ownerSVGElement, key });
     };
@@ -73,9 +76,11 @@ class Drawing extends React.Component {
 
   handleMouseMove(e) {
     if (this.state.dragging) {
-      // const dim = this.state.target.getBoundingClientRect();
-      // const x = e.clientX - dim.left;
-      // const y = e.clientY - dim.top;
+      const dim = this.state.target.getBoundingClientRect();
+      const x = e.clientX - dim.left;
+      const y = e.clientY - dim.top;
+
+      this.movePoint(this.state.key, x, y);
 
       // this.setState({
       //   points: update(this.state.points, {

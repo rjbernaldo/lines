@@ -13,8 +13,8 @@ const mapDispatchToProps = (dispatch) => {
     addPoint: (x, y) => {
       dispatch(addPoint(x, y));
     },
-    movePoint: (x, y) => {
-      dispatch(movePoint(x, y));
+    movePoint: (key, x, y) => {
+      dispatch(movePoint(key, x, y));
     },
   };
 };

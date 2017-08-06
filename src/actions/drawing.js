@@ -9,6 +9,11 @@ export function addPoint(x, y) {
   };
 }
 
-export function movePoint() {
-
+export function movePoint(key, x, y) {
+  return {
+    type: MOVE_POINT,
+    key,
+    x,
+    y,
+  };
 }

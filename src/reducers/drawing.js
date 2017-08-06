@@ -1,6 +1,6 @@
 import update from 'react-addons-update';
 
-import { ADD_POINT } from '../actions/drawing';
+import { ADD_POINT, MOVE_POINT } from '../actions/drawing';
 
 const initialState = {
   points: {
@@ -35,6 +35,17 @@ export default function (state = initialState, action) {
       }
 
       return newState;
+      break;
+    }
+    case MOVE_POINT: {
+      return Object.assign({}, {
+        points: update(state.points, {
+          [action.key]: {
+            x: { $set: action.x },
+            y: { $set: action.y },
+          }
+        })
+      })
       break;
     }
     default: {
