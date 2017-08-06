@@ -35,7 +35,6 @@ export default function (state = initialState, action) {
       }
 
       return newState;
-      break;
     }
     case MOVE_POINT: {
       return Object.assign({}, {
@@ -43,14 +42,12 @@ export default function (state = initialState, action) {
           [action.key]: {
             x: { $set: action.x },
             y: { $set: action.y },
-          }
-        })
-      })
-      break;
+          },
+        }),
+      });
     }
     default: {
       return state;
-      break;
     }
   }
 }
