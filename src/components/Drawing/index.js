@@ -34,29 +34,6 @@ class Drawing extends React.Component {
       const y = e.clientY - dim.top;
 
       this.addPoint(x, y);
-
-      // const nextKey = Object.keys(this.state.points).length;
-      // const prev = nextKey - 1;
-      // const current = this.state.points;
-
-      // current[nextKey] = {
-      //   x,
-      //   y,
-      //   prev,
-      //   next: null,
-      // };
-
-      // this.setState({ points: current }, () => {
-      //   if (prev > -1) {
-      //     this.setState({
-      //       points: update(this.state.points, {
-      //         [prev]: {
-      //           next: { $set: nextKey },
-      //         },
-      //       }),
-      //     });
-      //   }
-      // });
     }
   }
 
@@ -81,15 +58,6 @@ class Drawing extends React.Component {
       const y = e.clientY - dim.top;
 
       this.movePoint(this.state.key, x, y);
-
-      // this.setState({
-      //   points: update(this.state.points, {
-      //     [this.state.key]: {
-      //       x: { $set: x },
-      //       y: { $set: y },
-      //     },
-      //   }),
-      // });
     }
   }
 
