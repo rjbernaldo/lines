@@ -3,9 +3,9 @@ import update from 'react-addons-update';
 import { ADD_POINT, MOVE_POINT } from '../actions/drawing';
 
 const initialState = {
-  points: [
+  points: {
     // 0: { x: 100, y: 350, prev: null, next: 1 },
-  ],
+  },
 };
 
 export default function (state = initialState, action) {
