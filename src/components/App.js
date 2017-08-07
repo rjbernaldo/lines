@@ -11,7 +11,7 @@ import Sidebar from './Sidebar';
 const App = () => (
   <GApp centered={false}>
     <GSplit flex="left">
-      <GBox pad="small">
+      <GBox>
         <Switch>
           <Route exact path="/" component={Home} />
         </Switch>

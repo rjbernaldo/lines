@@ -23,6 +23,8 @@ class Drawing extends React.Component {
       target: null,
       dragging: false,
       key: null,
+      width: 0,
+      height: 0,
     };
   }
 
@@ -106,8 +108,8 @@ class Drawing extends React.Component {
   render() {
     return (
       <svg
-        height="1000"
-        width="1000"
+        height="100%"
+        width="100%"
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
         onMouseMove={this.handleMouseMove}
