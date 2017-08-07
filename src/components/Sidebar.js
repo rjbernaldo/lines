@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 
 import GBox from 'grommet/components/Box';
-import GImage from 'grommet/components/Image';
 import GMenu from 'grommet/components/Menu';
 import GAnchor from 'grommet/components/Anchor';
 import GHeading from 'grommet/components/Heading';
 
-import SearchIcon from 'grommet/components/icons/base/Search';
-import UserIcon from 'grommet/components/icons/base/User';
+// import CLineList from '../containers/CLineList';
 
 const Sidebar = () => (
   <GBox>
@@ -18,6 +16,7 @@ const Sidebar = () => (
         </GHeading>
       </GBox>
       <GAnchor label="Sample Link" path="/sample-link" />
+      {/* <LineList /> */}
     </GMenu>
   </GBox>
 );
