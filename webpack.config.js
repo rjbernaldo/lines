@@ -2,6 +2,24 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const plugins = [
+  new HtmlWebpackPlugin({
+    title: 'Lines',
+    template: 'src/index.html',
+    inject: 'body',
+  }),
+];
+
+if (process.env.NODE_ENV === 'production') {
+  plugins.concat([
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    }),
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.optimize.AggressiveMergingPlugin(),
+  ]);
+}
+
 module.exports = {
   devServer: {
     historyApiFallback: true,
@@ -40,16 +58,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-    }),
-    new webpack.optimize.UglifyJsPlugin(),
-    new webpack.optimize.AggressiveMergingPlugin(),
-    new HtmlWebpackPlugin({
-      title: 'Lines',
-      template: 'src/index.html',
-      inject: 'body',
-    }),
-  ],
+  plugins,
 };
