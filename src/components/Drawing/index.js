@@ -108,6 +108,7 @@ class Drawing extends React.Component {
   render() {
     return (
       <svg
+        style={{ cursor: 'crosshair' }}
         height="100%"
         width="100%"
         onMouseDown={this.handleMouseDown}
