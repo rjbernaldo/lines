@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 
+import GBox from 'grommet/components/Box';
+import GButton from 'grommet/components/Button';
+
 class LineList extends React.Component {
   constructor(props) {
     super(props);
 
     this.renderLines = this.renderLines.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   renderLines(k, i) {
@@ -13,24 +17,36 @@ class LineList extends React.Component {
 
     if (current.next) {
       const next = points[current.next];
+      const label = `Length: ${calculateLength(current, next)}`;
 
       return (
-        <li key={i}>{`Line ${parseInt(k) + 1} length: ${calculateLength(current, next)}`}</li>
+        <GBox pad="none" style={{ paddingBottom: '5px' }}>
+          <GButton
+            style={{ paddingBottom: '5px' }}
+            key={i}
+            onClick={this.handleClick}
+            label={label}
+          />
+        </GBox>
       );
     }
 
     return null;
   }
 
+  handleClick() {
+    console.log('line');
+  }
+
   render() {
     return (
-      <ul>
+      <GBox pad="medium">
         {
           Object
             .keys(this.props.points)
             .map(this.renderLines)
         }
-      </ul>
+      </GBox>
     );
   }
 }

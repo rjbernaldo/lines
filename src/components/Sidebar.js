@@ -9,21 +9,20 @@ import GHeading from 'grommet/components/Heading';
 import CLineList from '../containers/CLineList';
 
 const Sidebar = () => (
-  <GBox>
+  <GBox style={{ width: '300px' }}>
     <GBox pad="medium" style={{ paddingBottom: '0px' }}>
       <GButton
-        onClick={onClick}
+        primary={true}
+        onClick={handleClick}
         label="Add Point"
       />
     </GBox>
-    <GBox pad="medium" style={{ paddingBottom: '0px' }}>
-      <CLineList />
-    </GBox>
+    <CLineList />
   </GBox>
 );
 
 export default Sidebar;
 
-function onClick() {
+function handleClick() {
   console.log('test');
 }
