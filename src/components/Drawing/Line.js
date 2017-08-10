@@ -22,7 +22,7 @@ class Line extends React.Component {
         stroke="none"
         fill="black"
       >
-        {calculateLength(current, next)}
+        { calculateLength(current, next) }
       </text>
     );
 
