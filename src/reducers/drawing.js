@@ -6,6 +6,9 @@ const initialState = {
   points: {
     // 0: { x: 100, y: 350, prev: null, next: 1 },
   },
+  lines: {
+
+  }
 };
 
 export default function (state = initialState, action) {

@@ -38,6 +38,10 @@ class Drawing extends React.Component {
       const y = e.clientY - dim.top;
 
       this.addPoint(x, y);
+    } else if (e.target.tagName === 'path' && drawMode) {
+      const mouse = this.state.mouse;
+
+      this.addPoint(mouse.x, mouse.y);
     }
   }
 
@@ -62,6 +66,7 @@ class Drawing extends React.Component {
 
   handleMouseMove(e) {
     const selectMode = this.props.mode === 'SELECT';
+    const drawMode = this.props.mode === 'DRAW';
 
     if (this.state.dragging && selectMode) {
       const dim = this.state.target.getBoundingClientRect();
@@ -69,6 +74,18 @@ class Drawing extends React.Component {
       const y = e.clientY - dim.top;
 
       this.movePoint(this.state.key, x, y);
+    } else if (e.target.tagName === 'svg' && drawMode) {
+      const target = e.target;
+      const dim = target.getBoundingClientRect();
+      const x = e.clientX - dim.left;
+      const y = e.clientY - dim.top;
+
+      this.setState({
+        mouse: {
+          x,
+          y,
+        },
+      });
     }
   }
 
@@ -96,6 +113,7 @@ class Drawing extends React.Component {
   renderLines(k, i) {
     const points = this.props.points;
     const current = points[k];
+    const drawMode = this.props.mode === 'DRAW';
 
     if (current.next) {
       const next = points[current.next];
@@ -109,6 +127,20 @@ class Drawing extends React.Component {
           ny={next.y}
         />
       );
+    } else if (drawMode) {
+      const next = this.state.mouse;
+
+      if (next) {
+        return (
+          <Line
+            key={i}
+            x={current.x}
+            y={current.y}
+            nx={next.x}
+            ny={next.y}
+          />
+        );
+      }
     }
 
     return null;
