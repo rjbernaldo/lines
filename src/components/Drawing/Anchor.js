@@ -6,6 +6,9 @@ const Anchor = ({ x, y, handleMouseDown, degrees }) => {
   if (degrees) {
     text = (
       <text
+        style={{
+          WebkitUserSelect: 'none',
+        }}
         x={x - 25}
         y={y - 25}
         fontFamily="sans-serif"
