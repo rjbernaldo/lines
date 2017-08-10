@@ -37,7 +37,7 @@ class Anchor extends React.Component {
           stroke="none"
           fill="black"
         >
-          {degrees}
+          {degrees}º
         </text>
       );
     }

@@ -121,10 +121,8 @@ class Drawing extends React.Component {
       return (
         <Line
           key={i}
-          x={current.x}
-          y={current.y}
-          nx={next.x}
-          ny={next.y}
+          current={current}
+          next={next}
         />
       );
     } else if (drawMode) {
@@ -134,10 +132,8 @@ class Drawing extends React.Component {
         return (
           <Line
             key={i}
-            x={current.x}
-            y={current.y}
-            nx={next.x}
-            ny={next.y}
+            current={current}
+            next={next}
           />
         );
       }
