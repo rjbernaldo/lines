@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const plugins = [
+let plugins = [
   new HtmlWebpackPlugin({
     title: 'Lines',
     template: 'src/index.html',
@@ -11,7 +11,7 @@ const plugins = [
 ];
 
 if (process.env.NODE_ENV === 'production') {
-  plugins.concat([
+  plugins = plugins.concat([
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
