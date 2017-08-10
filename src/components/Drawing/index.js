@@ -7,9 +7,6 @@ class Drawing extends React.Component {
   constructor(props) {
     super(props);
 
-    this.addPoint = this.props.addPoint.bind(this);
-    this.movePoint = this.props.movePoint.bind(this);
-
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -29,6 +26,7 @@ class Drawing extends React.Component {
   }
 
   handleMouseDown(e) {
+    const { addPoint } = this.props;
     const drawMode = this.props.mode === 'DRAW';
 
     if (e.target.tagName === 'svg' && drawMode) {
@@ -37,11 +35,11 @@ class Drawing extends React.Component {
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
-      this.addPoint(x, y);
+      addPoint(x, y);
     } else if (e.target.tagName === 'path' && drawMode) {
       const mouse = this.state.mouse;
 
-      this.addPoint(mouse.x, mouse.y);
+      addPoint(mouse.x, mouse.y);
     }
   }
 
@@ -65,6 +63,7 @@ class Drawing extends React.Component {
   }
 
   handleMouseMove(e) {
+    const { movePoint } = this.props;
     const selectMode = this.props.mode === 'SELECT';
     const drawMode = this.props.mode === 'DRAW';
 
@@ -73,7 +72,7 @@ class Drawing extends React.Component {
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
-      this.movePoint(this.state.key, x, y);
+      movePoint(this.state.key, x, y);
     } else if (e.target.tagName === 'svg' && drawMode) {
       const target = e.target;
       const dim = target.getBoundingClientRect();
@@ -105,6 +104,7 @@ class Drawing extends React.Component {
         x={x}
         y={y}
         handleMouseDown={handleMouseDown}
+        mode={this.props.mode}
         degrees={degrees}
       />
     );
