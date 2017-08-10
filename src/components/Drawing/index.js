@@ -29,7 +29,7 @@ class Drawing extends React.Component {
   }
 
   handleMouseDown(e) {
-    if (e.target.tagName === 'svg') {
+    if (e.target.tagName === 'svg' && this.props.mode === 'SELECT') {
       const target = e.target;
       const dim = target.getBoundingClientRect();
       const x = e.clientX - dim.left;
@@ -106,9 +106,15 @@ class Drawing extends React.Component {
   }
 
   render() {
+    const style = {
+      cursor: this.props.mode === 'DRAW'
+        ? 'crosshair'
+        : true,
+    };
+
     return (
       <svg
-        style={{ cursor: 'crosshair' }}
+        style={style}
         height="100%"
         width="100%"
         onMouseDown={this.handleMouseDown}

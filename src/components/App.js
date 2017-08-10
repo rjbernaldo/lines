@@ -6,7 +6,7 @@ import GBox from 'grommet/components/Box';
 import GSplit from 'grommet/components/Split';
 
 import Home from './Home';
-import Sidebar from './Sidebar';
+import CSidebar from '../containers/CSidebar';
 
 const App = () => (
   <GApp centered={false}>
@@ -17,7 +17,7 @@ const App = () => (
         </Switch>
       </GBox>
       <GBox colorIndex="light-2" full="vertical">
-        <Sidebar />
+        <CSidebar />
       </GBox>
     </GSplit>
   </GApp>

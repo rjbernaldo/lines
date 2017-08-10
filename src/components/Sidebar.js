@@ -8,21 +8,27 @@ import GHeading from 'grommet/components/Heading';
 
 import CLineList from '../containers/CLineList';
 
-const Sidebar = () => (
-  <GBox style={{ width: '300px' }}>
-    <GBox pad="medium" style={{ paddingBottom: '0px' }}>
-      <GButton
-        primary={true}
-        onClick={handleClick}
-        label="Add Point"
-      />
+const Sidebar = ({ mode, toggleMode }) => {
+  const label = mode === 'SELECT'
+    ? 'Add Point'
+    : 'Done';
+
+  const handleClick = () => {
+    toggleMode(mode);
+  };
+
+  return (
+    <GBox style={{ width: '300px' }}>
+      <GBox pad="medium" style={{ paddingBottom: '0px' }}>
+        <GButton
+          primary={true}
+          onClick={handleClick}
+          label={label}
+        />
+      </GBox>
+      <CLineList />
     </GBox>
-    <CLineList />
-  </GBox>
-);
+  );
+};
 
 export default Sidebar;
-
-function handleClick() {
-  console.log('test');
-}

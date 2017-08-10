@@ -5,6 +5,7 @@ import { addPoint, movePoint } from '../actions/drawing';
 const mapStateToProps = (state) => {
   return {
     points: state.drawing.points,
+    mode: state.mode,
   };
 };
 

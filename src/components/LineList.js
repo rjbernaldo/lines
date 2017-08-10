@@ -20,10 +20,9 @@ class LineList extends React.Component {
       const label = `Length: ${calculateLength(current, next)}`;
 
       return (
-        <GBox pad="none" style={{ paddingBottom: '5px' }}>
+        <GBox pad="none" style={{ paddingBottom: '5px' }} key={i}>
           <GButton
             style={{ paddingBottom: '5px' }}
-            key={i}
             onClick={this.handleClick}
             label={label}
           />
