@@ -41,6 +41,7 @@ class Anchor extends React.Component {
         </text>
       );
     }
+
     const stroke = this.state.hover && this.props.mode === 'SELECT'
         ? 'blue'
         : 'black';

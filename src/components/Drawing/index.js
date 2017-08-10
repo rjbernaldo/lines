@@ -129,6 +129,7 @@ class Drawing extends React.Component {
           key={i}
           current={current}
           next={next}
+          mode={this.props.mode}
         />
       );
     } else if (drawMode) {

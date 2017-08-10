@@ -3,6 +3,21 @@ import React, { Component } from 'react';
 class Line extends React.Component {
   constructor(props) {
     super(props);
+
+    this.handleMouseEnter = this.handleMouseEnter.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+
+    this.state = {
+      hover: false,
+    };
+  }
+
+  handleMouseEnter() {
+    this.setState({ hover: true })
+  }
+
+  handleMouseLeave() {
+    this.setState({ hover: false })
   }
 
   render() {
@@ -26,12 +41,18 @@ class Line extends React.Component {
       </text>
     );
 
+    const stroke = this.state.hover && this.props.mode === 'SELECT'
+        ? 'blue'
+        : 'black';
+
     return (
       <g>
         <path
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
           key={i}
           d={`M${current.x} ${current.y} L${next.x} ${next.y}`}
-          stroke="black"
+          stroke={stroke}
           strokeWidth="3"
           fill="none"
         />
