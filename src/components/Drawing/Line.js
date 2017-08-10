@@ -1,36 +1,44 @@
 import React, { Component } from 'react';
 
-const Line = ({ i, current, next }) => {
-  const mid = calculateMidPoint(current, next);
+class Line extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
-  const text = (
-    <text
-      style={{
-        WebkitUserSelect: 'none',
-      }}
-      x={mid.x - 25}
-      y={mid.y - 25}
-      fontFamily="sans-serif"
-      fontSize="12px"
-      stroke="none"
-      fill="black"
-    >
-      {calculateLength(current, next)}
-    </text>
-  );
+  render() {
+    const { i, current, next } = this.props;
 
-  return (
-    <g>
-      <path
-        key={i}
-        d={`M${current.x} ${current.y} L${next.x} ${next.y}`}
-        stroke="black"
-        strokeWidth="3"
-        fill="none"
-      />
-      { text }
-    </g>
-  );
+    const mid = calculateMidPoint(current, next);
+
+    const text = (
+      <text
+        style={{
+          WebkitUserSelect: 'none',
+        }}
+        x={mid.x - 25}
+        y={mid.y - 25}
+        fontFamily="sans-serif"
+        fontSize="12px"
+        stroke="none"
+        fill="black"
+      >
+        {calculateLength(current, next)}
+      </text>
+    );
+
+    return (
+      <g>
+        <path
+          key={i}
+          d={`M${current.x} ${current.y} L${next.x} ${next.y}`}
+          stroke="black"
+          strokeWidth="3"
+          fill="none"
+        />
+        { text }
+      </g>
+    );
+  }
 };
 
 export default Line;
