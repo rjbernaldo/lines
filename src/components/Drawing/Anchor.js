@@ -8,7 +8,7 @@ class Anchor extends React.Component {
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
 
     this.state = {
-      hover: false
+      hover: false,
     };
   }
 
