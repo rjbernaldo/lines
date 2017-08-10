@@ -151,9 +151,11 @@ class Drawing extends React.Component {
 
   render() {
     const style = {
-      cursor: this.props.mode === 'DRAW'
-        ? 'crosshair'
-        : true,
+      cursor: this.state.dragging
+        ? 'move'
+        : this.props.mode === 'DRAW'
+          ? 'crosshair'
+          : true,
     };
 
     return (
