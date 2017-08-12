@@ -74,9 +74,11 @@ class Drawing extends React.Component {
         });
       } else if (drawMode) {
         const id = Object.keys(points).filter(k => points[k] === p)[0];
-        const { x, y } = points[id];
+        const { x, y, prev, next } = points[id];
 
-        if (this.state.origin.id !== id) {
+        if (prev && next) {
+          alert('Unable to add more connections to anchor');
+        } else if (this.state.origin.id !== id) {
           modifyPoint(this.state.origin.id, null, null, id);
 
           this.setState({
@@ -158,20 +160,15 @@ class Drawing extends React.Component {
     const selectMode = this.props.mode === 'SELECT';
     const drawMode = this.props.mode === 'DRAW';
 
+    const dim = this.state.svg.getBoundingClientRect();
+    const x = e.clientX - dim.left;
+    const y = e.clientY - dim.top;
+
     if (this.state.touched && !this.state.dragging && selectMode) {
       this.setState({ dragging: true });
     } else if (this.state.dragging && selectMode) {
-      const dim = this.state.svg.getBoundingClientRect();
-      const x = e.clientX - dim.left;
-      const y = e.clientY - dim.top;
-
       modifyPoint(this.state.id, x, y);
-    } else if (e.target.tagName === 'svg' && drawMode) {
-      const target = e.target;
-      const dim = target.getBoundingClientRect();
-      const x = e.clientX - dim.left;
-      const y = e.clientY - dim.top;
-
+    } else {
       this.setState({
         mouse: {
           x,
@@ -217,7 +214,6 @@ class Drawing extends React.Component {
     const current = points[k];
     const drawMode = mode === 'DRAW';
 
-console.log(points);
     if (current.next) {
       const next = points[current.next];
 
