@@ -25,6 +25,7 @@ class Drawing extends React.Component {
       height: 0,
       origin: {},
       mouse: {},
+      message: null,
     };
   }
 
@@ -56,7 +57,7 @@ class Drawing extends React.Component {
 
   anchorMouseDown(p) {
     return (e) => {
-      const { mode, points, modifyPoint } = this.props;
+      const { mode, points, modifyPoint, setSelect, setDraw } = this.props;
       const selectMode = mode === 'SELECT';
       const drawMode = mode === 'DRAW';
 
@@ -64,7 +65,7 @@ class Drawing extends React.Component {
       const { x, y, prev, next } = points[id];
 
       if (prev && next) {
-        alert('Unable to add more connections to anchor');
+        this.setState({ message: 'Unable to add more connections to anchor' });
       } else if (selectMode) {
         this.setState({
           touched: true,
@@ -83,6 +84,15 @@ class Drawing extends React.Component {
             x,
             y,
           },
+        }, () => {
+          let id = Object.keys(this.props.points).filter(k => points[k] === p)[0];
+          let { prev, next } = this.props.points[id];
+
+          if (prev && next) {
+            this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
+              setSelect();
+            });
+          }
         });
       }
     };
@@ -93,7 +103,10 @@ class Drawing extends React.Component {
     const selectMode = mode === 'SELECT';
     const drawMode = mode === 'DRAW';
 
-    if (e.target.tagName === 'svg' && drawMode) {
+    if (this.state.message) {
+      alert(this.state.message);
+      this.setState({ message: null });
+    } else if (e.target.tagName === 'svg' && drawMode) {
       const target = this.state.svg;
       const dim = target.getBoundingClientRect();
       const x = e.clientX - dim.left;

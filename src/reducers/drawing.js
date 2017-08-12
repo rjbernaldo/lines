@@ -38,10 +38,11 @@ export default function (state = initialState, action) {
       return newState;
     }
     case MODIFY_POINT: {
+      const current = Object.assign({}, state.points);
       const origin = state.points[action.id];
 
-      return Object.assign({}, {
-        points: update(state.points, {
+      let newState = Object.assign({}, {
+        points: update(current, {
           [action.id]: {
             x: { $set: action.x || origin.x },
             y: { $set: action.y || origin.y },
@@ -49,6 +50,18 @@ export default function (state = initialState, action) {
           },
         }),
       });
+
+      if (action.next) {
+        newState = Object.assign({}, newState, {
+          points: update(newState.points, {
+            [action.next]: {
+              prev: { $set: action.id },
+            },
+          }),
+        });
+      }
+
+      return newState;
     }
     default: {
       return state;
