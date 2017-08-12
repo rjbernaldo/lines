@@ -1,19 +1,20 @@
 export const ADD_POINT = 'ADD_POINT';
 export const MOVE_POINT = 'MOVE_POINT';
 
-export function addPoint(x, y, prev) {
+export function addPoint(id, x, y, prev) {
   return {
     type: ADD_POINT,
+    id,
     x,
     y,
     prev,
   };
 }
 
-export function movePoint(key, x, y) {
+export function movePoint(id, x, y) {
   return {
     type: MOVE_POINT,
-    key,
+    id,
     x,
     y,
   };

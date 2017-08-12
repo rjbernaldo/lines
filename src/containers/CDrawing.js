@@ -12,8 +12,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addPoint: (x, y) => {
-      dispatch(addPoint(x, y));
+    addPoint: (id, x, y, prev) => {
+      dispatch(addPoint(id, x, y, prev));
     },
     movePoint: (key, x, y) => {
       dispatch(movePoint(key, x, y));

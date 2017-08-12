@@ -24,19 +24,25 @@ class Drawing extends React.Component {
       key: null,
       width: 0,
       height: 0,
+      origin: {},
+      mouse: {},
     };
   }
 
   handleDoubleClick(e) {
-    const drawMode = this.props.mode === 'DRAW';
+    const { mode, setSelect } = this.props;
+    const drawMode = mode === 'DRAW';
 
     if (e.target.tagName === 'circle' && drawMode) {
-      this.props.setSelect();
+      this.setState({ origin: {}, mouse: {} }, () => {
+        setSelect();
+      });
     }
   }
 
   handleMouseDown(e) {
-    const drawMode = this.props.mode === 'DRAW';
+    const { mode } = this.props;
+    const drawMode = mode === 'DRAW';
 
     if (e.target.tagName === 'circle' && drawMode) {
       e.target.ondblclick = this.handleDoubleClick;
@@ -45,11 +51,12 @@ class Drawing extends React.Component {
 
   anchorMouseDown(p) {
     return (e) => {
-      const selectMode = this.props.mode === 'SELECT';
+      const { mode } = this.props;
+      const selectMode = mode === 'SELECT';
 
       if (selectMode) {
-        const key = Object.keys(this.props.points).filter(k => this.props.points[k] === p);
-        this.setState({ dragging: true, target: e.target.ownerSVGElement, key });
+        const id = Object.keys(this.props.points).filter(k => this.props.points[k] === p);
+        this.setState({ dragging: true, target: e.target.ownerSVGElement, id });
       }
     };
   }
@@ -65,16 +72,27 @@ class Drawing extends React.Component {
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
-      addPoint(x, y);
-    } else if (e.target.tagName === 'path' && drawMode) {
-      const mouse = this.state.mouse;
-
-      addPoint(mouse.x, mouse.y, this.props.points);
+      const id = Math.random().toString(36).substring(7);
+      addPoint(id, x, y, this.state.origin.id);
 
       this.setState({
         origin: {
-          x: mouse.x,
-          y: mouse.y,
+          id,
+          x,
+          y,
+        },
+      });
+    } else if (e.target.tagName === 'path' && drawMode) {
+      const { x, y } = this.state.mouse;
+
+      const id = Math.random().toString(36).substring(7);
+      addPoint(id, x, y, this.state.origin.id);
+
+      this.setState({
+        origin: {
+          id,
+          x,
+          y,
         },
       });
     } else if (this.state.dragging && selectMode) {
@@ -87,14 +105,16 @@ class Drawing extends React.Component {
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
+      const id = Math.random().toString(36).substring(7);
+      addPoint(id, x, y, this.state.origin.id);
+
       this.setState({
         origin: {
+          id,
           x,
           y,
         },
       });
-
-      addPoint(x, y);
     }
   }
 
@@ -108,7 +128,7 @@ class Drawing extends React.Component {
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
-      movePoint(this.state.key, x, y);
+      movePoint(this.state.id, x, y);
     } else if (e.target.tagName === 'svg' && drawMode) {
       const target = e.target;
       const dim = target.getBoundingClientRect();
@@ -153,9 +173,9 @@ class Drawing extends React.Component {
   }
 
   renderLines(k, i) {
-    const points = this.props.points;
+    const { points, mode } = this.props;
     const current = points[k];
-    const drawMode = this.props.mode === 'DRAW';
+    const drawMode = mode === 'DRAW';
 
     if (current.next) {
       const next = points[current.next];
@@ -165,14 +185,14 @@ class Drawing extends React.Component {
           key={i}
           current={current}
           next={next}
-          mode={this.props.mode}
+          mode={mode}
         />
       );
     } else if (drawMode) {
       const origin = this.state.origin;
       const next = this.state.mouse;
 
-      if (next) {
+      if (origin.x && origin.y && next.x && next.y) {
         return (
           <Line
             key={i}

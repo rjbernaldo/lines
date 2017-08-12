@@ -15,15 +15,9 @@ export default function (state = initialState, action) {
   switch (action.type) {
     case ADD_POINT: {
       const current = Object.assign({}, state.points);
-      const next = Object.keys(current).length;
+      const prev = action.prev;
 
-      let prev;// = next - 1;
-
-      if (action.anchor) {
-        prev = action.prev;
-      }
-
-      current[next] = {
+      current[action.id] = {
         x: action.x,
         y: action.y,
         prev,
@@ -32,11 +26,11 @@ export default function (state = initialState, action) {
 
       let newState = Object.assign({}, state, { points: current });
 
-      if (typeof prev !== 'undefined' && prev > -1) {
+      if (prev) {
         newState = Object.assign({}, newState, {
           points: update(current, {
             [prev]: {
-              next: { $set: next },
+              next: { $set: action.id },
             },
           }),
         });
@@ -47,7 +41,7 @@ export default function (state = initialState, action) {
     case MOVE_POINT: {
       return Object.assign({}, {
         points: update(state.points, {
-          [action.key]: {
+          [action.id]: {
             x: { $set: action.x },
             y: { $set: action.y },
           },
