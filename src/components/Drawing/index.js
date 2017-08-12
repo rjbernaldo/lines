@@ -84,22 +84,13 @@ class Drawing extends React.Component {
             x,
             y,
           },
-        }, () => {
-          let id = Object.keys(this.props.points).filter(k => points[k] === p)[0];
-          let { prev, next } = this.props.points[id];
-
-          if (prev && next) {
-            this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
-              setSelect();
-            });
-          }
         });
       }
     };
   }
 
   handleMouseUp(e) {
-    const { mode, setDraw, addPoint } = this.props;
+    const { mode, setDraw, addPoint, setSelect } = this.props;
     const selectMode = mode === 'SELECT';
     const drawMode = mode === 'DRAW';
 
@@ -157,9 +148,17 @@ class Drawing extends React.Component {
       });
     } else if (e.target.tagName === 'circle' && !this.state.dragging && selectMode) {
       setDraw();
-      this.setState({
-        touched: false,
-      });
+      // this.setState({
+      //   touched: false,
+      // });
+    } else if (e.target.tagName === 'circle' && !this.state.dragging && drawMode) {
+      const current = this.props.points[this.state.origin.id];
+
+      if (current.prev && current.next) {
+        this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
+          setSelect();
+        });
+      }
     }
   }
 
