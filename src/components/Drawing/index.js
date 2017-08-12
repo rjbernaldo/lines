@@ -130,16 +130,6 @@ class Drawing extends React.Component {
       this.setState({
         touched: false,
       });
-
-      // const last = this.props.points[this.state.id];
-
-      // this.setState({
-      //   origin: {
-      //     id: this.state.origin,
-      //     x: last.x,
-      //     y: last.y,
-      //   },
-      // });
     }
   }
 
