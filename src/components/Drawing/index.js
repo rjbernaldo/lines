@@ -7,6 +7,8 @@ class Drawing extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handleDoubleClick = this.handleDoubleClick.bind(this);
+
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -25,6 +27,14 @@ class Drawing extends React.Component {
     };
   }
 
+  handleDoubleClick(e) {
+    const drawMode = this.props.mode === 'DRAW';
+
+    if (e.target.tagName === 'circle' && drawMode) {
+      this.props.setSelect();
+    }
+  }
+
   handleMouseDown(e) {
     const { addPoint } = this.props;
     const drawMode = this.props.mode === 'DRAW';
@@ -40,6 +50,8 @@ class Drawing extends React.Component {
       const mouse = this.state.mouse;
 
       addPoint(mouse.x, mouse.y);
+    } else if (e.target.tagName === 'circle' && drawMode) {
+      e.target.ondblclick = this.handleDoubleClick;
     }
   }
 
