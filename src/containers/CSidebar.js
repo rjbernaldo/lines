@@ -10,11 +10,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    toggleMode: (mode) => {
-      return mode === 'DRAW'
-        ? dispatch(setSelect())
-        : dispatch(setDraw());
-    },
   };
 };
 
