@@ -45,7 +45,7 @@ export default function (state = initialState, action) {
           [action.id]: {
             x: { $set: action.x || origin.x },
             y: { $set: action.y || origin.y },
-            next: { $set: action.next || origin.next }
+            next: { $set: action.next || origin.next },
           },
         }),
       });
