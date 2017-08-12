@@ -21,7 +21,6 @@ export default function (state = initialState, action) {
         x: action.x,
         y: action.y,
         prev,
-        next: null,
       };
 
       let newState = Object.assign({}, state, { points: current });

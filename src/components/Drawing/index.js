@@ -149,12 +149,15 @@ class Drawing extends React.Component {
     const { x, y, prev, next } = points[k];
     const handleMouseDown = this.anchorMouseDown(points[k]);
 
-    const p = this.props.points[prev];
-    let n = this.props.points[next];
+    let p;
+    let n;
+
+    if (prev) p = this.props.points[prev];
+    if (next) n = this.props.points[next];
 
     const drawMode = this.props.mode === 'DRAW';
 
-    if (typeof n === 'undefined' && drawMode) {
+    if (typeof n === 'undefined' && drawMode && k === this.state.origin.id) {
       n = this.state.mouse;
     }
 
