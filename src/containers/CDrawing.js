@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Drawing from '../components/Drawing/index';
-import { addPoint, movePoint } from '../actions/drawing';
+import { addPoint, modifyPoint } from '../actions/drawing';
 import { setDraw, setSelect } from '../actions/mode';
 
 const mapStateToProps = (state) => {
@@ -15,8 +15,8 @@ const mapDispatchToProps = (dispatch) => {
     addPoint: (id, x, y, prev) => {
       dispatch(addPoint(id, x, y, prev));
     },
-    movePoint: (key, x, y) => {
-      dispatch(movePoint(key, x, y));
+    modifyPoint: (id, x, y, next) => {
+      dispatch(modifyPoint(id, x, y, next));
     },
     setSelect: () => {
       dispatch(setSelect());

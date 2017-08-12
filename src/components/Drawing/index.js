@@ -50,13 +50,30 @@ class Drawing extends React.Component {
 
   anchorMouseDown(p) {
     return (e) => {
-      const { mode, points } = this.props;
+      const { mode, points, modifyPoint } = this.props;
       const selectMode = mode === 'SELECT';
+      const drawMode = mode === 'DRAW';
 
       if (selectMode) {
         const id = Object.keys(points).filter(k => points[k] === p)[0];
         const { x, y } = points[id];
         const target = e.target.ownerSVGElement;
+
+        this.setState({
+          touched: true,
+          origin: {
+            id,
+            x,
+            y,
+            target,
+          },
+        });
+      } else if (drawMode) {
+        const id = Object.keys(points).filter(k => points[k] === p)[0];
+        const { x, y } = points[id];
+        const target = e.target.ownerSVGElement;
+
+        modifyPoint(this.state.origin.id, null, null, id)
 
         this.setState({
           touched: true,
@@ -134,7 +151,7 @@ class Drawing extends React.Component {
   }
 
   handleMouseMove(e) {
-    const { movePoint } = this.props;
+    const { modifyPoint } = this.props;
     const selectMode = this.props.mode === 'SELECT';
     const drawMode = this.props.mode === 'DRAW';
 
@@ -145,7 +162,7 @@ class Drawing extends React.Component {
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
-      movePoint(this.state.id, x, y);
+      modifyPoint(this.state.id, x, y);
     } else if (e.target.tagName === 'svg' && drawMode) {
       const target = e.target;
       const dim = target.getBoundingClientRect();
