@@ -19,9 +19,8 @@ class Drawing extends React.Component {
     this.renderLines = this.renderLines.bind(this);
 
     this.state = {
-      target: null,
+      touched: false,
       dragging: false,
-      key: null,
       width: 0,
       height: 0,
       origin: {},
@@ -51,12 +50,23 @@ class Drawing extends React.Component {
 
   anchorMouseDown(p) {
     return (e) => {
-      const { mode } = this.props;
+      const { mode, points } = this.props;
       const selectMode = mode === 'SELECT';
 
       if (selectMode) {
-        const id = Object.keys(this.props.points).filter(k => this.props.points[k] === p);
-        this.setState({ dragging: true, target: e.target.ownerSVGElement, id });
+        const id = Object.keys(points).filter(k => points[k] === p)[0];
+        const { x, y } = points[id];
+        const target = e.target.ownerSVGElement;
+
+        this.setState({
+          touched: true,
+          origin: {
+            id,
+            x,
+            y,
+            target,
+          },
+        });
       }
     };
   }
@@ -96,8 +106,8 @@ class Drawing extends React.Component {
         },
       });
     } else if (this.state.dragging && selectMode) {
-      this.setState({ dragging: false, key: null, target: null });
-    } else if (!this.state.dragging && selectMode) {
+      this.setState({ touched: false, dragging: false, id: null, target: null });
+    } else if (e.target.tagName !== 'circle' && !this.state.dragging && selectMode) {
       setDraw();
 
       const target = e.target;
@@ -115,6 +125,21 @@ class Drawing extends React.Component {
           y,
         },
       });
+    } else if (e.target.tagName === 'circle' && !this.state.dragging && selectMode) {
+      setDraw();
+      this.setState({
+        touched: false,
+      });
+
+      // const last = this.props.points[this.state.id];
+
+      // this.setState({
+      //   origin: {
+      //     id: this.state.origin,
+      //     x: last.x,
+      //     y: last.y,
+      //   },
+      // });
     }
   }
 
@@ -123,8 +148,10 @@ class Drawing extends React.Component {
     const selectMode = this.props.mode === 'SELECT';
     const drawMode = this.props.mode === 'DRAW';
 
-    if (this.state.dragging && selectMode) {
-      const dim = this.state.target.getBoundingClientRect();
+    if (this.state.touched && !this.state.dragging && selectMode) {
+      this.setState({ dragging: true });
+    } else if (this.state.dragging && selectMode) {
+      const dim = this.state.origin.target.getBoundingClientRect();
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
@@ -211,7 +238,7 @@ class Drawing extends React.Component {
 
   render() {
     const style = {
-      cursor: this.state.dragging
+      cursor: this.state.touched
         ? 'move'
         : this.props.mode === 'DRAW'
           ? 'crosshair'
