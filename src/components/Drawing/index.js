@@ -76,16 +76,17 @@ class Drawing extends React.Component {
         const id = Object.keys(points).filter(k => points[k] === p)[0];
         const { x, y } = points[id];
 
-        modifyPoint(this.state.origin.id, null, null, id)
+        if (this.state.origin.id !== id) {
+          modifyPoint(this.state.origin.id, null, null, id);
 
-        this.setState({
-          touched: true,
-          origin: {
-            id,
-            x,
-            y,
-          },
-        });
+          this.setState({
+            origin: {
+              id,
+              x,
+              y,
+            },
+          });
+        }
       }
     };
   }
@@ -216,6 +217,7 @@ class Drawing extends React.Component {
     const current = points[k];
     const drawMode = mode === 'DRAW';
 
+console.log(points);
     if (current.next) {
       const next = points[current.next];
 
