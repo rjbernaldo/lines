@@ -16,7 +16,12 @@ export default function (state = initialState, action) {
     case ADD_POINT: {
       const current = Object.assign({}, state.points);
       const next = Object.keys(current).length;
-      const prev = next - 1;
+
+      let prev;// = next - 1;
+
+      if (action.anchor) {
+        prev = action.prev;
+      }
 
       current[next] = {
         x: action.x,
@@ -27,7 +32,7 @@ export default function (state = initialState, action) {
 
       let newState = Object.assign({}, state, { points: current });
 
-      if (prev > -1) {
+      if (typeof prev !== 'undefined' && prev > -1) {
         newState = Object.assign({}, newState, {
           points: update(current, {
             [prev]: {

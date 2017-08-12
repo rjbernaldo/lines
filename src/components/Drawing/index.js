@@ -36,21 +36,9 @@ class Drawing extends React.Component {
   }
 
   handleMouseDown(e) {
-    const { addPoint } = this.props;
     const drawMode = this.props.mode === 'DRAW';
 
-    if (e.target.tagName === 'svg' && drawMode) {
-      const target = e.target;
-      const dim = target.getBoundingClientRect();
-      const x = e.clientX - dim.left;
-      const y = e.clientY - dim.top;
-
-      addPoint(x, y);
-    } else if (e.target.tagName === 'path' && drawMode) {
-      const mouse = this.state.mouse;
-
-      addPoint(mouse.x, mouse.y);
-    } else if (e.target.tagName === 'circle' && drawMode) {
+    if (e.target.tagName === 'circle' && drawMode) {
       e.target.ondblclick = this.handleDoubleClick;
     }
   }
@@ -67,10 +55,46 @@ class Drawing extends React.Component {
   }
 
   handleMouseUp(e) {
-    const selectMode = this.props.mode === 'SELECT';
+    const { mode, setDraw, addPoint } = this.props;
+    const selectMode = mode === 'SELECT';
+    const drawMode = mode === 'DRAW';
 
-    if (this.state.dragging && selectMode) {
+    if (e.target.tagName === 'svg' && drawMode) {
+      const target = e.target;
+      const dim = target.getBoundingClientRect();
+      const x = e.clientX - dim.left;
+      const y = e.clientY - dim.top;
+
+      addPoint(x, y);
+    } else if (e.target.tagName === 'path' && drawMode) {
+      const mouse = this.state.mouse;
+
+      addPoint(mouse.x, mouse.y, this.props.points);
+
+      this.setState({
+        origin: {
+          x: mouse.x,
+          y: mouse.y,
+        },
+      });
+    } else if (this.state.dragging && selectMode) {
       this.setState({ dragging: false, key: null, target: null });
+    } else if (!this.state.dragging && selectMode) {
+      setDraw();
+
+      const target = e.target;
+      const dim = target.getBoundingClientRect();
+      const x = e.clientX - dim.left;
+      const y = e.clientY - dim.top;
+
+      this.setState({
+        origin: {
+          x,
+          y,
+        },
+      });
+
+      addPoint(x, y);
     }
   }
 
@@ -145,13 +169,14 @@ class Drawing extends React.Component {
         />
       );
     } else if (drawMode) {
+      const origin = this.state.origin;
       const next = this.state.mouse;
 
       if (next) {
         return (
           <Line
             key={i}
-            current={current}
+            current={origin}
             next={next}
           />
         );

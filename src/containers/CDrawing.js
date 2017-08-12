@@ -21,6 +21,9 @@ const mapDispatchToProps = (dispatch) => {
     setSelect: () => {
       dispatch(setSelect());
     },
+    setDraw: () => {
+      dispatch(setDraw());
+    },
   };
 };
 
