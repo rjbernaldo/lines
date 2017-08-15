@@ -33,8 +33,9 @@ class Drawing extends React.Component {
   }
 
   endDraw() {
+    const { setSelect } = this.props;
     this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
-      this.props.setSelect();
+      setSelect();
     });
   }
 
@@ -91,7 +92,7 @@ class Drawing extends React.Component {
   }
 
   handleMouseUp(e) {
-    const { mode, points, setDraw } = this.props;
+    const { mode, points, setDraw, setSelect } = this.props;
 
     if (mode === 'DRAW') {
       switch (e.target.tagName) {
@@ -121,19 +122,17 @@ class Drawing extends React.Component {
         }
       }
     } else if (!this.state.dragging) {
+      setDraw();
+
       if (e.target.tagName === 'circle') {
         const c = points[this.state.origin.id];
-
         if (c && c.prev && c.next) {
           this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
+            setSelect();
             alert('Unable to add more connections to anchor.');
           });
-        } else {
-          setDraw();
         }
       } else {
-        setDraw();
-
         this.addPoint(
           this.calculateCoords(e),
           this.state.origin.id,
