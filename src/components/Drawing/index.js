@@ -17,6 +17,7 @@ class Drawing extends React.Component {
     this.renderLines = this.renderLines.bind(this);
 
     this.endDraw = this.endDraw.bind(this);
+    this.calculateCoords = this.calculateCoords.bind(this);
 
     this.state = {
       touched: false,
@@ -73,6 +74,14 @@ class Drawing extends React.Component {
     };
   }
 
+  calculateCoords(e, target = this.state.svg) {
+    const dim = target.getBoundingClientRect();
+    const x = e.clientX - dim.left;
+    const y = e.clientY - dim.top;
+
+    return { x, y };
+  }
+
   handleMouseUp(e) {
     const { points, mode, setDraw, addPoint, setSelect } = this.props;
     const selectMode = mode === 'SELECT';
@@ -82,10 +91,7 @@ class Drawing extends React.Component {
     if (drawMode) {
       switch (e.target.tagName) {
         case 'svg': {
-          const target = this.state.svg;
-          const dim = target.getBoundingClientRect();
-          const x = e.clientX - dim.left;
-          const y = e.clientY - dim.top;
+          const { x, y } = this.calculateCoords(e);
           addPoint(id, x, y, this.state.origin.id);
 
           const origin = { id, x, y };
@@ -94,7 +100,6 @@ class Drawing extends React.Component {
         }
         case 'path': {
           const { x, y } = this.state.mouse;
-
           addPoint(id, x, y, this.state.origin.id);
 
           const origin = { id, x, y };
@@ -110,37 +115,28 @@ class Drawing extends React.Component {
           break;
         }
       }
-    } else {
+    } else if (!this.state.dragging) {
+      if (e.target.tagName === 'circle') {
+        const c = points[this.state.origin.id];
 
-    }
-
-    if (e.target.tagName === 'svg' && drawMode) {
-    } else if (e.target.tagName === 'path' && drawMode) {
-    } else if (this.state.dragging && selectMode) {
-      this.endDraw();
-    } else if (e.target.tagName !== 'circle' && !this.state.dragging && selectMode) {
-      setDraw();
-
-      const target = e.target;
-      const dim = target.getBoundingClientRect();
-      const x = e.clientX - dim.left;
-      const y = e.clientY - dim.top;
-
-      addPoint(id, x, y, this.state.origin.id);
-
-      const origin = { id, x, y };
-      this.setState({ origin });
-    } else if (e.target.tagName === 'circle' && !this.state.dragging && selectMode) {
-      const c = points[this.state.origin.id];
-
-      if (c && c.prev && c.next) {
-        this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
-          alert('Unable to add more connections to anchor.');
-        });
+        if (c && c.prev && c.next) {
+          this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
+            alert('Unable to add more connections to anchor.');
+          });
+        } else {
+          setDraw();
+        }
       } else {
         setDraw();
+
+        const { x, y } = this.calculateCoords(e, e.target);
+        addPoint(id, x, y, this.state.origin.id);
+
+        const origin = { id, x, y };
+        this.setState({ origin });
       }
-    } else if (e.target.tagName === 'circle' && !this.state.dragging && drawMode) {
+    } else {
+      this.endDraw();
     }
   }
 
