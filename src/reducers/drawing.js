@@ -26,13 +26,25 @@ export default function (state = initialState, action) {
       let newState = Object.assign({}, state, { points: current });
 
       if (prev) {
-        newState = Object.assign({}, newState, {
-          points: update(current, {
-            [prev]: {
-              next: { $set: action.id },
-            },
-          }),
-        });
+        const p = current[prev];
+
+        if (!p.next) {
+          newState = Object.assign({}, newState, {
+            points: update(current, {
+              [prev]: {
+                next: { $set: action.id },
+              },
+            }),
+          });
+        } else if (!p.prev && p.next) {
+          newState = Object.assign({}, newState, {
+            points: update(current, {
+              [prev]: {
+                prev: { $set: action.id },
+              },
+            }),
+          });
+        }
       }
 
       return newState;

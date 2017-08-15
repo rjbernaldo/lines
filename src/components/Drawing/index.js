@@ -62,11 +62,9 @@ class Drawing extends React.Component {
       const drawMode = mode === 'DRAW';
 
       const id = Object.keys(points).filter(k => points[k] === p)[0];
-      const { x, y, prev, next } = points[id];
+      const { x, y } = points[id];
 
-      if (prev && next) {
-        this.setState({ message: 'Unable to add more connections to anchor' });
-      } else if (selectMode) {
+      if (selectMode) {
         this.setState({
           touched: true,
           origin: {
@@ -90,14 +88,11 @@ class Drawing extends React.Component {
   }
 
   handleMouseUp(e) {
-    const { mode, setDraw, addPoint, setSelect } = this.props;
+    const { points, mode, setDraw, addPoint, setSelect } = this.props;
     const selectMode = mode === 'SELECT';
     const drawMode = mode === 'DRAW';
 
-    if (this.state.message) {
-      alert(this.state.message);
-      this.setState({ message: null });
-    } else if (e.target.tagName === 'svg' && drawMode) {
+    if (e.target.tagName === 'svg' && drawMode) {
       const target = this.state.svg;
       const dim = target.getBoundingClientRect();
       const x = e.clientX - dim.left;
@@ -147,14 +142,19 @@ class Drawing extends React.Component {
         },
       });
     } else if (e.target.tagName === 'circle' && !this.state.dragging && selectMode) {
-      setDraw();
-      // this.setState({
-      //   touched: false,
-      // });
-    } else if (e.target.tagName === 'circle' && !this.state.dragging && drawMode) {
-      const current = this.props.points[this.state.origin.id];
+      const c = points[this.state.origin.id];
 
-      if (current.prev && current.next) {
+      if (c && c.prev && c.next) {
+        this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
+          alert('Unable to add more connections to anchor.');
+        });
+      } else {
+        setDraw();
+      }
+    } else if (e.target.tagName === 'circle' && !this.state.dragging && drawMode) {
+      const c = points[this.state.origin.id];
+
+      if (c && c.prev && c.next) {
         this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
           setSelect();
         });
@@ -174,7 +174,7 @@ class Drawing extends React.Component {
     if (this.state.touched && !this.state.dragging && selectMode) {
       this.setState({ dragging: true });
     } else if (this.state.dragging && selectMode) {
-      modifyPoint(this.state.id, x, y);
+      modifyPoint(this.state.origin.id, x, y);
     } else {
       this.setState({
         mouse: {

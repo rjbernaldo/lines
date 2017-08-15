@@ -9,9 +9,7 @@
     "clean": "rimraf dist",
     "build": "npm run clean && NODE_ENV=production ./node_modules/webpack/bin/webpack.js",
     "start": "NODE_ENV=production npm run build && ./node_modules/babel-cli/bin/babel-node.js .",
-    "now": "npm run build && now ./dist --public",
-    "webpack-dev-server": "webpack-dev-server --progress --color",
-    "serve": "npm run webpack-dev-server"
+    "now": "npm run build && now ./dist --public"
   },
   "repository": {
     "type": "git",
