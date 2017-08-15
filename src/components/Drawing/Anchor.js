@@ -13,15 +13,18 @@ class Anchor extends React.Component {
   }
 
   handleMouseEnter() {
-    this.setState({ hover: true })
+    this.setState({ hover: true });
   }
 
   handleMouseLeave() {
-    this.setState({ hover: false })
+    this.setState({ hover: false });
   }
 
   render() {
-    const { x, y, handleMouseDown, degrees } = this.props;
+    const { x, y, handleMouseDown, prev, next } = this.props;
+
+    const degrees = calculateDegrees(prev, { x, y }, next);
+
     let text;
 
     if (degrees) {
@@ -70,3 +73,16 @@ class Anchor extends React.Component {
 }
 
 export default Anchor;
+
+function calculateDegrees(A, B, C) {
+  if (A && B && C) {
+    const AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
+    const BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
+    const AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
+    const angle = Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
+
+    return Math.floor(angle * 180 / Math.PI);
+  }
+
+  return null;
+}

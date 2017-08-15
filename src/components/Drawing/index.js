@@ -17,6 +17,7 @@ class Drawing extends React.Component {
     this.renderLines = this.renderLines.bind(this);
 
     this.endDraw = this.endDraw.bind(this);
+    this.addPoint = this.addPoint.bind(this);
     this.calculateCoords = this.calculateCoords.bind(this);
 
     this.state = {
@@ -32,18 +33,14 @@ class Drawing extends React.Component {
   }
 
   endDraw() {
-    const { setSelect } = this.props;
-
     this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
-      setSelect();
+      this.props.setSelect();
     });
   }
 
   handleMouseDown(e) {
     const { mode } = this.props;
-    const drawMode = mode === 'DRAW';
-
-    if (e.target.tagName === 'circle' && drawMode) {
+    if (e.target.tagName === 'circle' && mode === 'DRAW') {
       e.target.ondblclick = () => {
         this.endDraw();
       };
@@ -52,7 +49,7 @@ class Drawing extends React.Component {
 
   anchorMouseDown(p) {
     return (e) => {
-      const { mode, points, modifyPoint, setSelect, setDraw } = this.props;
+      const { mode, points, modifyPoint } = this.props;
       const selectMode = mode === 'SELECT';
       const drawMode = mode === 'DRAW';
 
@@ -82,37 +79,45 @@ class Drawing extends React.Component {
     return { x, y };
   }
 
-  handleMouseUp(e) {
-    const { points, mode, setDraw, addPoint, setSelect } = this.props;
-    const selectMode = mode === 'SELECT';
-    const drawMode = mode === 'DRAW';
+  addPoint(coords, previousId) {
+    const { addPoint } = this.props;
+    const { x, y } = coords;
     const id = Math.random().toString(36).substring(7);
 
-    if (drawMode) {
+    addPoint(id, x, y, previousId);
+
+    const origin = { id, x, y };
+    this.setState({ origin });
+  }
+
+  handleMouseUp(e) {
+    const { mode, points, setDraw } = this.props;
+
+    if (mode === 'DRAW') {
       switch (e.target.tagName) {
         case 'svg': {
-          const { x, y } = this.calculateCoords(e);
-          addPoint(id, x, y, this.state.origin.id);
-
-          const origin = { id, x, y };
-          this.setState({ origin });
+          this.addPoint(
+            this.calculateCoords(e),
+            this.state.origin.id,
+          );
           break;
         }
         case 'path': {
-          const { x, y } = this.state.mouse;
-          addPoint(id, x, y, this.state.origin.id);
-
-          const origin = { id, x, y };
-          this.setState({ origin });
+          const coords = this.state.mouse;
+          this.addPoint(
+            this.state.mouse,
+            this.state.origin.id,
+          );
           break;
         }
         case 'circle': {
           const c = points[this.state.origin.id];
 
-          if (c && c.prev && c.next && !this.state.dragging) {
-            this.endDraw();
-          }
+          if (c && c.prev && c.next) this.endDraw();
           break;
+        }
+        default: {
+          console.log(e.target.tagName);
         }
       }
     } else if (!this.state.dragging) {
@@ -129,11 +134,10 @@ class Drawing extends React.Component {
       } else {
         setDraw();
 
-        const { x, y } = this.calculateCoords(e, e.target);
-        addPoint(id, x, y, this.state.origin.id);
-
-        const origin = { id, x, y };
-        this.setState({ origin });
+        this.addPoint(
+          this.calculateCoords(e),
+          this.state.origin.id,
+        );
       }
     } else {
       this.endDraw();
@@ -148,7 +152,6 @@ class Drawing extends React.Component {
 
     if (selectMode) {
       if (this.state.dragging) {
-        const { x, y } = this.calculateCoords(e, e.target);
         modifyPoint(this.state.origin.id, x, y);
       } else if (this.state.touched) {
         this.setState({ dragging: true });
@@ -160,32 +163,22 @@ class Drawing extends React.Component {
   }
 
   renderAnchors(k, i) {
-    const points = this.props.points;
+    const { mode, points } = this.props;
     const { x, y, prev, next } = points[k];
     const handleMouseDown = this.anchorMouseDown(points[k]);
 
-    let p;
-    let n;
-
-    if (prev) p = this.props.points[prev];
-    if (next) n = this.props.points[next];
-
-    const drawMode = this.props.mode === 'DRAW';
-
-    if (typeof n === 'undefined' && drawMode && k === this.state.origin.id) {
-      n = this.state.mouse;
-    }
-
-    const degrees = calculateDegrees(p, { x, y }, n);
+    const p = prev ? points[prev] : null;
+    const n = next ? points[next] : this.state.mouse;
 
     return (
       <Anchor
         key={i}
         x={x}
         y={y}
+        prev={p}
+        next={n}
         handleMouseDown={handleMouseDown}
-        mode={this.props.mode}
-        degrees={degrees}
+        mode={mode}
       />
     );
   }
@@ -258,16 +251,3 @@ class Drawing extends React.Component {
 }
 
 export default Drawing;
-
-function calculateDegrees(A, B, C) {
-  if (A && B && C) {
-    const AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
-    const BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
-    const AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
-    const angle = Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
-
-    return Math.floor(angle * 180 / Math.PI);
-  }
-
-  return null;
-}
