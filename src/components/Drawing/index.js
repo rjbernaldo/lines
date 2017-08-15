@@ -144,23 +144,18 @@ class Drawing extends React.Component {
     const { mode, modifyPoint } = this.props;
     const selectMode = mode === 'SELECT';
 
-    const dim = this.state.svg.getBoundingClientRect();
-    const x = e.clientX - dim.left;
-    const y = e.clientY - dim.top;
+    const { x, y } = this.calculateCoords(e);
 
     if (selectMode) {
       if (this.state.dragging) {
+        const { x, y } = this.calculateCoords(e, e.target);
         modifyPoint(this.state.origin.id, x, y);
       } else if (this.state.touched) {
         this.setState({ dragging: true });
       }
     } else {
-      this.setState({
-        mouse: {
-          x,
-          y,
-        },
-      });
+      const mouse = { x, y };
+      this.setState({ mouse });
     }
   }
 
