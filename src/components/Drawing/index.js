@@ -21,18 +21,13 @@ class Drawing extends React.Component {
     this.state = {
       touched: false,
       dragging: false,
-      width: 0,
-      height: 0,
       origin: {},
       mouse: {},
-      message: null,
     };
   }
 
   componentDidMount() {
-    this.setState({
-      svg: document.getElementsByTagName('svg')[0],
-    });
+    this.setState({ svg: document.getElementsByTagName('svg')[0] });
   }
 
   handleDoubleClick(e) {
