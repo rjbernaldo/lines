@@ -57,30 +57,17 @@ class Drawing extends React.Component {
 
       const id = Object.keys(points).filter(k => points[k] === p)[0];
       const { prev, next, x, y } = points[id];
+      const origin = { id, x, y };
 
       if (selectMode) {
-        this.setState({
-          touched: true,
-          origin: {
-            id,
-            x,
-            y,
-          },
-        });
+        this.setState({ touched: true, origin });
       } else if (drawMode && this.state.origin.id !== id) {
-
         if (prev && next) {
           alert('Unable to add more connections to anchor.');
         } else {
           modifyPoint(this.state.origin.id, null, null, id);
 
-          this.setState({
-            origin: {
-              id,
-              x,
-              y,
-            },
-          });
+          this.setState({ origin });
         }
       }
     };
@@ -90,38 +77,47 @@ class Drawing extends React.Component {
     const { points, mode, setDraw, addPoint, setSelect } = this.props;
     const selectMode = mode === 'SELECT';
     const drawMode = mode === 'DRAW';
+    const id = Math.random().toString(36).substring(7);
+
+    if (drawMode) {
+      switch (e.target.tagName) {
+        case 'svg': {
+          const target = this.state.svg;
+          const dim = target.getBoundingClientRect();
+          const x = e.clientX - dim.left;
+          const y = e.clientY - dim.top;
+          addPoint(id, x, y, this.state.origin.id);
+
+          const origin = { id, x, y };
+          this.setState({ origin });
+          break;
+        }
+        case 'path': {
+          const { x, y } = this.state.mouse;
+
+          addPoint(id, x, y, this.state.origin.id);
+
+          const origin = { id, x, y };
+          this.setState({ origin });
+          break;
+        }
+        case 'circle': {
+          const c = points[this.state.origin.id];
+
+          if (c && c.prev && c.next && !this.state.dragging) {
+            this.endDraw();
+          }
+          break;
+        }
+      }
+    } else {
+
+    }
 
     if (e.target.tagName === 'svg' && drawMode) {
-      const target = this.state.svg;
-      const dim = target.getBoundingClientRect();
-      const x = e.clientX - dim.left;
-      const y = e.clientY - dim.top;
-
-      const id = Math.random().toString(36).substring(7);
-      addPoint(id, x, y, this.state.origin.id);
-
-      this.setState({
-        origin: {
-          id,
-          x,
-          y,
-        },
-      });
     } else if (e.target.tagName === 'path' && drawMode) {
-      const { x, y } = this.state.mouse;
-
-      const id = Math.random().toString(36).substring(7);
-      addPoint(id, x, y, this.state.origin.id);
-
-      this.setState({
-        origin: {
-          id,
-          x,
-          y,
-        },
-      });
     } else if (this.state.dragging && selectMode) {
-      this.setState({ touched: false, dragging: false, id: null, target: null });
+      this.endDraw();
     } else if (e.target.tagName !== 'circle' && !this.state.dragging && selectMode) {
       setDraw();
 
@@ -130,16 +126,10 @@ class Drawing extends React.Component {
       const x = e.clientX - dim.left;
       const y = e.clientY - dim.top;
 
-      const id = Math.random().toString(36).substring(7);
       addPoint(id, x, y, this.state.origin.id);
 
-      this.setState({
-        origin: {
-          id,
-          x,
-          y,
-        },
-      });
+      const origin = { id, x, y };
+      this.setState({ origin });
     } else if (e.target.tagName === 'circle' && !this.state.dragging && selectMode) {
       const c = points[this.state.origin.id];
 
@@ -151,11 +141,6 @@ class Drawing extends React.Component {
         setDraw();
       }
     } else if (e.target.tagName === 'circle' && !this.state.dragging && drawMode) {
-      const c = points[this.state.origin.id];
-
-      if (c && c.prev && c.next) {
-        this.endDraw();
-      }
     }
   }
 
