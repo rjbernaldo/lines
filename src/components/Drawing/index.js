@@ -62,7 +62,7 @@ class Drawing extends React.Component {
       const drawMode = mode === 'DRAW';
 
       const id = Object.keys(points).filter(k => points[k] === p)[0];
-      const { x, y } = points[id];
+      const { prev, next, x, y } = points[id];
 
       if (selectMode) {
         this.setState({
@@ -74,15 +74,20 @@ class Drawing extends React.Component {
           },
         });
       } else if (drawMode && this.state.origin.id !== id) {
-        modifyPoint(this.state.origin.id, null, null, id);
 
-        this.setState({
-          origin: {
-            id,
-            x,
-            y,
-          },
-        });
+        if (prev && next) {
+          alert('Unable to add more connections to anchor.');
+        } else {
+          modifyPoint(this.state.origin.id, null, null, id);
+
+          this.setState({
+            origin: {
+              id,
+              x,
+              y,
+            },
+          });
+        }
       }
     };
   }
