@@ -7,8 +7,6 @@ class Drawing extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleDoubleClick = this.handleDoubleClick.bind(this);
-
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -17,6 +15,8 @@ class Drawing extends React.Component {
 
     this.renderAnchors = this.renderAnchors.bind(this);
     this.renderLines = this.renderLines.bind(this);
+
+    this.endDraw = this.endDraw.bind(this);
 
     this.state = {
       touched: false,
@@ -30,15 +30,12 @@ class Drawing extends React.Component {
     this.setState({ svg: document.getElementsByTagName('svg')[0] });
   }
 
-  handleDoubleClick(e) {
-    const { mode, setSelect } = this.props;
-    const drawMode = mode === 'DRAW';
+  endDraw() {
+    const { setSelect } = this.props;
 
-    if (e.target.tagName === 'circle' && drawMode) {
-      this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
-        setSelect();
-      });
-    }
+    this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
+      setSelect();
+    });
   }
 
   handleMouseDown(e) {
@@ -46,7 +43,9 @@ class Drawing extends React.Component {
     const drawMode = mode === 'DRAW';
 
     if (e.target.tagName === 'circle' && drawMode) {
-      e.target.ondblclick = this.handleDoubleClick;
+      e.target.ondblclick = () => {
+        this.endDraw();
+      };
     }
   }
 
@@ -155,26 +154,25 @@ class Drawing extends React.Component {
       const c = points[this.state.origin.id];
 
       if (c && c.prev && c.next) {
-        this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
-          setSelect();
-        });
+        this.endDraw();
       }
     }
   }
 
   handleMouseMove(e) {
-    const { modifyPoint } = this.props;
-    const selectMode = this.props.mode === 'SELECT';
-    const drawMode = this.props.mode === 'DRAW';
+    const { mode, modifyPoint } = this.props;
+    const selectMode = mode === 'SELECT';
 
     const dim = this.state.svg.getBoundingClientRect();
     const x = e.clientX - dim.left;
     const y = e.clientY - dim.top;
 
-    if (this.state.touched && !this.state.dragging && selectMode) {
-      this.setState({ dragging: true });
-    } else if (this.state.dragging && selectMode) {
-      modifyPoint(this.state.origin.id, x, y);
+    if (selectMode) {
+      if (this.state.dragging) {
+        modifyPoint(this.state.origin.id, x, y);
+      } else if (this.state.touched) {
+        this.setState({ dragging: true });
+      }
     } else {
       this.setState({
         mouse: {
