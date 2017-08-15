@@ -28,7 +28,7 @@ export default function (state = initialState, action) {
       if (prev) {
         const p = current[prev];
 
-        if (!p.next) {
+        if (typeof p.next === 'undefined') {
           newState = Object.assign({}, newState, {
             points: update(current, {
               [prev]: {
@@ -36,7 +36,7 @@ export default function (state = initialState, action) {
               },
             }),
           });
-        } else if (!p.prev && p.next) {
+        } else if (typeof p.prev === 'undefined') {
           newState = Object.assign({}, newState, {
             points: update(current, {
               [prev]: {
