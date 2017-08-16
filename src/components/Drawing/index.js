@@ -67,6 +67,7 @@ class Drawing extends React.Component {
         } else {
           this.setState({ origin }, () => {
             modifyPoint(id, null, null, lastId);
+            modifyPoint(lastId, null, null, id);
           });
         }
       }
