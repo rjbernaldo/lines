@@ -50,6 +50,8 @@ class Drawing extends React.Component {
 
   anchorMouseDown(p) {
     return (e) => {
+      if (e.nativeEvent.which === 3) return;
+
       const { mode, points, modifyPoint } = this.props;
       const selectMode = mode === 'SELECT';
       const drawMode = mode === 'DRAW';
@@ -94,6 +96,8 @@ class Drawing extends React.Component {
   }
 
   handleMouseUp(e) {
+    if (e.nativeEvent.which === 3) return;
+
     const { mode, points, setDraw, setSelect } = this.props;
 
     if (mode === 'DRAW') {
@@ -163,15 +167,21 @@ class Drawing extends React.Component {
   }
 
   renderAnchors(k, i) {
-    const { mode, points } = this.props;
-    const { x, y, connections } = points[k];
+    const { deletePoint, mode, points } = this.props;
+    const { id, x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(points[k]);
 
     const prev = connections[0] ? points[connections[0]] : null;
     const next = connections[1] ? points[connections[1]] : null;
 
+    const deleteAnchor = (e) => {
+      e.preventDefault();
+      deletePoint(id);
+    };
+
     return (
       <Anchor
+        onContextMenu={deleteAnchor}
         key={i}
         x={x}
         y={y}
@@ -214,8 +224,7 @@ class Drawing extends React.Component {
           : true,
     };
 
-    const lines = generateLines(this.props.points);
-    const activeLine = (mode) => {
+    const renderActiveLine = (mode) => {
       const current = this.state.origin;
       const next = this.state.mouse;
 
@@ -239,10 +248,11 @@ class Drawing extends React.Component {
         onMouseMove={this.handleMouseMove}
       >
         {
-          lines.map(this.renderLines)
+          generateLines(this.props.points)
+            .map(this.renderLines)
         }
         {
-          activeLine(this.props.mode)
+          renderActiveLine(this.props.mode)
         }
         {
           Object

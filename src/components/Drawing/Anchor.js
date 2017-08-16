@@ -21,7 +21,7 @@ class Anchor extends React.Component {
   }
 
   render() {
-    const { x, y, handleMouseDown, prev, next } = this.props;
+    const { x, y, handleMouseDown, onContextMenu, prev, next } = this.props;
 
     const degrees = calculateDegrees(prev, { x, y }, next);
 
@@ -56,6 +56,7 @@ class Anchor extends React.Component {
     return (
       <g>
         <circle
+          onContextMenu={onContextMenu}
           onMouseDown={handleMouseDown}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}

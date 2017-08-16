@@ -1,6 +1,6 @@
 import update from 'react-addons-update';
 
-import { ADD_POINT, MODIFY_POINT } from '../actions/drawing';
+import { ADD_POINT, MODIFY_POINT, DELETE_POINT } from '../actions/drawing';
 
 const initialState = {
   points: {},
@@ -59,6 +59,28 @@ export default function (state = initialState, action) {
       }
 
       return newState;
+    }
+    case DELETE_POINT: {
+      const current = Object.assign({}, state.points);
+      delete current[action.id];
+
+      Object
+        .keys(current)
+        .map((id) => {
+          const point = current[id];
+
+          const i = point.connections.indexOf(action.id);
+          if (i > -1) {
+            point.connections = [
+              ...point.connections.slice(0, i),
+              ...point.connections.slice(i + 1),
+            ];
+          }
+        });
+
+      return Object.assign({}, state, {
+        points: current,
+      });
     }
     default: {
       return state;
