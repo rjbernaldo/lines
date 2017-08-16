@@ -171,8 +171,15 @@ class Drawing extends React.Component {
     const { id, x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(points[k]);
 
-    const prev = connections[0] ? points[connections[0]] : null;
-    const next = connections[1] ? points[connections[1]] : null;
+    const prev = connections[0]
+      ? points[connections[0]]
+      : null;
+
+    const next = connections[1]
+      ? points[connections[1]]
+      : this.state.origin.id === id
+        ? this.state.mouse
+        : null;
 
     const deleteAnchor = (e) => {
       e.preventDefault();
