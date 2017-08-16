@@ -3,48 +3,34 @@ import update from 'react-addons-update';
 import { ADD_POINT, MODIFY_POINT } from '../actions/drawing';
 
 const initialState = {
-  points: {
-    // 0: { x: 100, y: 350, prev: null, next: 1 },
-  },
-  lines: {
-
-  }
+  points: {},
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
     case ADD_POINT: {
       const current = Object.assign({}, state.points);
-      const prev = action.prev;
+      const connections = [];
+      const { id, x, y, previousId } = action;
+      if (previousId) connections.push(previousId);
 
-      current[action.id] = {
-        x: action.x,
-        y: action.y,
-        prev,
+      current[id] = {
+        id,
+        x,
+        y,
+        connections,
       };
 
       let newState = Object.assign({}, state, { points: current });
 
-      if (prev) {
-        const p = current[prev];
-
-        if (typeof p.next === 'undefined') {
-          newState = Object.assign({}, newState, {
-            points: update(current, {
-              [prev]: {
-                next: { $set: action.id },
-              },
-            }),
-          });
-        } else if (typeof p.prev === 'undefined') {
-          newState = Object.assign({}, newState, {
-            points: update(current, {
-              [prev]: {
-                prev: { $set: action.id },
-              },
-            }),
-          });
-        }
+      if (previousId && current[previousId].connections.length < 2) {
+        newState = Object.assign({}, newState, {
+          points: update(current, {
+            [previousId]: {
+              connections: { $set: current[previousId].connections.concat(id) },
+            },
+          }),
+        });
       }
 
       return newState;
@@ -58,16 +44,15 @@ export default function (state = initialState, action) {
           [action.id]: {
             x: { $set: action.x || origin.x },
             y: { $set: action.y || origin.y },
-            next: { $set: action.next || origin.next },
           },
         }),
       });
 
-      if (action.next) {
-        newState = Object.assign({}, newState, {
+      if (action.nextId) {
+        newState = Object.assign({}, {
           points: update(newState.points, {
-            [action.next]: {
-              prev: { $set: action.id },
+            [action.id]: {
+              connections: { $set: current[action.id].connections.concat(action.nextId) },
             },
           }),
         });

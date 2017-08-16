@@ -24,7 +24,6 @@ class Line extends React.Component {
     const { i, current, next } = this.props;
 
     const mid = calculateMidPoint(current, next);
-
     const text = (
       <text
         style={{

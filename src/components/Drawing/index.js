@@ -55,18 +55,19 @@ class Drawing extends React.Component {
       const drawMode = mode === 'DRAW';
 
       const id = Object.keys(points).filter(k => points[k] === p)[0];
-      const { prev, next, x, y } = points[id];
+      const lastId = this.state.origin.id;
+      const { x, y, connections } = points[id];
       const origin = { id, x, y };
 
       if (selectMode) {
         this.setState({ touched: true, origin });
-      } else if (drawMode && this.state.origin.id !== id) {
-        if (prev && next) {
+      } else if (drawMode && lastId !== id) {
+        if (connections.length === 2) {
           alert('Unable to add more connections to anchor.');
         } else {
-          modifyPoint(this.state.origin.id, null, null, id);
-
-          this.setState({ origin });
+          this.setState({ origin }, () => {
+            modifyPoint(id, null, null, lastId);
+          });
         }
       }
     };
@@ -113,12 +114,10 @@ class Drawing extends React.Component {
         }
         case 'circle': {
           const c = points[this.state.origin.id];
-
-          if (c && c.prev && c.next) this.endDraw();
+          if (c && c.connections.length === 2) this.endDraw();
           break;
         }
         default: {
-          console.log(e.target.tagName);
         }
       }
     } else if (!this.state.dragging) {
@@ -126,7 +125,8 @@ class Drawing extends React.Component {
 
       if (e.target.tagName === 'circle') {
         const c = points[this.state.origin.id];
-        if (c && c.prev && c.next) {
+
+        if (c && c.connections.length === 2) {
           this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
             setSelect();
             alert('Unable to add more connections to anchor.');
@@ -163,32 +163,33 @@ class Drawing extends React.Component {
 
   renderAnchors(k, i) {
     const { mode, points } = this.props;
-    const { x, y, prev, next } = points[k];
+    const { x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(points[k]);
 
-    const p = prev ? points[prev] : null;
-    const n = next ? points[next] : this.state.mouse;
+    const prev = connections[0] ? points[connections[0]] : null;
+    const next = connections[1] ? points[connections[1]] : null;
 
     return (
       <Anchor
         key={i}
         x={x}
         y={y}
-        prev={p}
-        next={n}
+        prev={prev}
+        next={next}
         handleMouseDown={handleMouseDown}
         mode={mode}
       />
     );
   }
 
-  renderLines(k, i) {
+  renderLines(line, i) {
     const { points, mode } = this.props;
-    const current = points[k];
-    const drawMode = mode === 'DRAW';
+    const currentId = line[0];
+    const nextId = line[1];
 
-    if (current.next) {
-      const next = points[current.next];
+    if (nextId) {
+      const current = points[currentId];
+      const next = points[nextId];
 
       return (
         <Line
@@ -198,19 +199,6 @@ class Drawing extends React.Component {
           mode={mode}
         />
       );
-    } else if (drawMode) {
-      const origin = this.state.origin;
-      const next = this.state.mouse;
-
-      if (origin.x && origin.y && next.x && next.y) {
-        return (
-          <Line
-            key={i}
-            current={origin}
-            next={next}
-          />
-        );
-      }
     }
 
     return null;
@@ -225,6 +213,21 @@ class Drawing extends React.Component {
           : true,
     };
 
+    const lines = generateLines(this.props.points);
+    const activeLine = (mode) => {
+      const current = this.state.origin;
+      const next = this.state.mouse;
+
+      if (mode === 'DRAW' && current.x && current.y && next.x && next.y) {
+        return (
+          <Line
+            current={current}
+            next={next}
+          />
+        );
+      }
+    };
+
     return (
       <svg
         style={style}
@@ -235,9 +238,10 @@ class Drawing extends React.Component {
         onMouseMove={this.handleMouseMove}
       >
         {
-          Object
-            .keys(this.props.points)
-            .map(this.renderLines)
+          lines.map(this.renderLines)
+        }
+        {
+          activeLine(this.props.mode)
         }
         {
           Object
@@ -247,6 +251,31 @@ class Drawing extends React.Component {
       </svg>
     );
   }
+}
+
+function generateLines(points) {
+  const lines = [];
+  const parsedConnections = [];
+  const pointObjects = Object
+    .keys(points)
+    .map(id => points[id]);
+
+  pointObjects.forEach((point) => {
+    const line = [point.id];
+    point.connections.forEach((connection) => {
+      const connectedPoints = `${line}${connection}`
+        .split('')
+        .sort()
+        .join('');
+
+      if (parsedConnections.indexOf(connectedPoints) === -1) {
+        lines.push(line.concat(connection));
+        parsedConnections.push(connectedPoints);
+      }
+    });
+  });
+
+  return lines;
 }
 
 export default Drawing;
