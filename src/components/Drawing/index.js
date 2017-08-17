@@ -25,6 +25,7 @@ class Drawing extends React.Component {
       dragging: false,
       origin: {},
       mouse: {},
+      edit: {},
     };
   }
 
