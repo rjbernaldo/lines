@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import GBox from 'grommet/components/Box';
 import GButton from 'grommet/components/Button';
+import GHeading from 'grommet/components/Heading';
 
 class LineList extends React.Component {
   constructor(props) {
@@ -24,7 +25,7 @@ class LineList extends React.Component {
 
       return (
         <GBox pad="none" style={{ paddingBottom: '5px' }} key={i}>
-          <GButton
+          <GButton 
             style={{ paddingBottom: '5px' }}
             onClick={this.handleClick}
             label={label}
@@ -43,6 +44,7 @@ class LineList extends React.Component {
   render() {
     return (
       <GBox pad="medium">
+        <GHeading tag="h3" style={{ WebkitUserSelect: 'none' }}>Lines</GHeading>
         {
           generateLines(this.props.points)
             .map(this.renderLines)
