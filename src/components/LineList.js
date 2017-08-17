@@ -19,7 +19,8 @@ class LineList extends React.Component {
     if (nextId) {
       const current = points[currentId];
       const next = points[nextId];
-      const label = `Length: ${calculateLength(current, next)}`;
+      const length = calculateLength(current, next);
+      const label = 'Length: xx';
 
       return (
         <GBox pad="none" style={{ paddingBottom: '5px' }} key={i}>
