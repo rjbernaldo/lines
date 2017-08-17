@@ -202,7 +202,7 @@ class Drawing extends React.Component {
   }
 
   renderLines(line, i) {
-    const { points, mode } = this.props;
+    const { points, mode, modifyPoint } = this.props;
     const currentId = line[0];
     const nextId = line[1];
 
@@ -216,6 +216,9 @@ class Drawing extends React.Component {
           current={current}
           next={next}
           mode={mode}
+          modifyPoint={(x, y) => {
+            modifyPoint(nextId, x, y);
+          }}
         />
       );
     }

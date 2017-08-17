@@ -31,11 +31,27 @@ class Line extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    console.log(this.state.input);
 
-    this.setState({
-      input: null,
-    });
+    const { modifyPoint, current, next } = this.props;
+
+    if (isNaN(this.state.input)) {
+      alert('Please enter a valid integer.');
+    } else {
+      const reducedLength = this.state.input;
+
+      this.setState({
+        input: null,
+      }, () => {
+        const straightPoint = {
+          x: current.x + 180,
+          y: current.y,
+        };
+        const quadrant = calculateQuadrant(current, next);
+        const angle = calculateDegrees(straightPoint, current, next);
+        const coords = calculateNewCoordinates(current, angle, reducedLength, quadrant);
+        modifyPoint(coords.x, coords.y);
+      });
+    }
   }
 
   handleChange(e) {
@@ -128,4 +144,51 @@ function calculateMidPoint(c, n) {
     x: parseInt(a/2),
     y: parseInt(b/2),
   };
+}
+
+function calculateNewCoordinates(origin, angle, distance, quadrant) {
+  let x;
+  let y;
+
+  switch (quadrant) {
+    case 1:
+    case 2: {
+      x = origin.x + (Math.cos((angle * Math.PI)/180) * distance);
+      y = origin.y - (Math.sin((angle * Math.PI)/180) * distance);
+      break;
+    }
+    case 3:
+    case 4: {
+      x = origin.x + (Math.cos((angle * Math.PI)/180) * distance);
+      y = origin.y + (Math.sin((angle * Math.PI)/180) * distance);
+      break;
+    }
+    default: {
+      console.log('error', quadrant);
+      break;
+    }
+  }
+
+  return { x, y };
+}
+
+function calculateDegrees(A, B, C) {
+  if (A && B && C) {
+    const AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
+    const BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
+    const AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
+    const angle = Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
+    return Math.floor(angle * 180 / Math.PI);
+  }
+
+  return null;
+}
+
+function calculateQuadrant(c, n) {
+  if (c.x < n.x && c.y > n.y) return 1;
+  if (c.x > n.x && c.y > n.y) return 2;
+  if (c.x > n.x && c.y < n.y) return 3;
+  if (c.x < n.x && c.y < n.y) return 4;
+
+  return 0;
 }
