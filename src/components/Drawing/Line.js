@@ -37,7 +37,7 @@ class Line extends React.Component {
     if (isNaN(this.state.input)) {
       alert('Please enter a valid integer.');
     } else {
-      const reducedLength = this.state.input;
+      const reducedLength = parseInt(this.state.input);
 
       this.setState({
         input: null,
@@ -146,21 +146,23 @@ function calculateMidPoint(c, n) {
   };
 }
 
-function calculateNewCoordinates(origin, angle, distance, quadrant) {
+function calculateNewCoordinates(origin, angle, length, quadrant, modifiedLength) {
   let x;
   let y;
+
+  const finalLength = modifiedLength || length;
 
   switch (quadrant) {
     case 1:
     case 2: {
-      x = origin.x + (Math.cos((angle * Math.PI)/180) * distance);
-      y = origin.y - (Math.sin((angle * Math.PI)/180) * distance);
+      x = origin.x + (Math.cos((angle * Math.PI)/180) * finalLength);
+      y = origin.y - (Math.sin((angle * Math.PI)/180) * finalLength);
       break;
     }
     case 3:
     case 4: {
-      x = origin.x + (Math.cos((angle * Math.PI)/180) * distance);
-      y = origin.y + (Math.sin((angle * Math.PI)/180) * distance);
+      x = origin.x + (Math.cos((angle * Math.PI)/180) * finalLength);
+      y = origin.y + (Math.sin((angle * Math.PI)/180) * finalLength);
       break;
     }
     default: {
@@ -169,7 +171,18 @@ function calculateNewCoordinates(origin, angle, distance, quadrant) {
     }
   }
 
-  return { x, y };
+  const result = { x, y };
+  const newLength = calculateLength(origin, result);
+
+  if (newLength < length) {
+    const l = finalLength + 0.01;
+    return calculateNewCoordinates(origin, angle, length, quadrant, l);
+  } else if (newLength > length) {
+    const l = finalLength - 0.01;
+    return calculateNewCoordinates(origin, angle, length, quadrant, l);
+  }
+
+  return result;
 }
 
 function calculateDegrees(A, B, C) {
