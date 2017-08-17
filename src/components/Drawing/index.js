@@ -271,6 +271,8 @@ class Drawing extends React.Component {
   }
 }
 
+export default Drawing;
+
 function generateLines(points) {
   const lines = [];
   const parsedConnections = [];
@@ -295,5 +297,3 @@ function generateLines(points) {
 
   return lines;
 }
-
-export default Drawing;

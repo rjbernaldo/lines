@@ -11,12 +11,14 @@ class LineList extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
-  renderLines(k, i) {
-    const points = this.props.points;
-    const current = points[k];
+  renderLines(line, i) {
+    const { points } = this.props;
+    const currentId = line[0];
+    const nextId = line[1];
 
-    if (current.next) {
-      const next = points[current.next];
+    if (nextId) {
+      const current = points[currentId];
+      const next = points[nextId];
       const label = `Length: ${calculateLength(current, next)}`;
 
       return (
@@ -41,8 +43,7 @@ class LineList extends React.Component {
     return (
       <GBox pad="medium">
         {
-          Object
-            .keys(this.props.points)
+          generateLines(this.props.points)
             .map(this.renderLines)
         }
       </GBox>
@@ -57,4 +58,29 @@ function calculateLength(c, n) {
   const b = c.y - n.y;
 
   return parseInt(Math.sqrt(a*a + b*b));
+}
+
+function generateLines(points) {
+  const lines = [];
+  const parsedConnections = [];
+  const pointObjects = Object
+    .keys(points)
+    .map(id => points[id]);
+
+  pointObjects.forEach((point) => {
+    const line = [point.id];
+    point.connections.forEach((connection) => {
+      const connectedPoints = `${line}${connection}`
+        .split('')
+        .sort()
+        .join('');
+
+      if (parsedConnections.indexOf(connectedPoints) === -1) {
+        lines.push(line.concat(connection));
+        parsedConnections.push(connectedPoints);
+      }
+    });
+  });
+
+  return lines;
 }
