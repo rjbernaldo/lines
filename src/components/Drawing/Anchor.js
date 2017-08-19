@@ -47,17 +47,16 @@ class Anchor extends React.Component {
         const c = next;
 
         const baseAngle = calculateDegrees(a, b, { x: x + 180, y });
-        const currentAngle = calculateDegrees(a, b, c);
         const length = calculateLength(b, c);
         const quadrant = calculateQuadrant(b, c);
-        const relativeAngle = modifiedAngle - baseAngle;
-        const coords = calculateNewCoordinates(b, relativeAngle, length, quadrant, null, a);
+        // const relativeAngle = modifiedAngle - baseAngle;
+        const coords = calculateNewCoordinates(b, baseAngle, modifiedAngle, length, quadrant, null, a);
 
-        console.log(`quadrant: ${quadrant}`);
-        console.log(`current: ${currentAngle}`);
-        console.log(`modified: ${modifiedAngle}`);
-        console.log(`base: ${baseAngle}`);
-        console.log(`relative: ${relativeAngle}`);
+        // console.log(`quadrant: ${quadrant}`);
+        // console.log(`current: ${currentAngle}`);
+        // console.log(`modified: ${modifiedAngle}`);
+        // console.log(`base: ${baseAngle}`);
+        // console.log(`relative: ${relativeAngle}`);
 
         modifyPoint(coords.x, coords.y);
       });
@@ -156,40 +155,37 @@ function calculateLength(c, n) {
   return parseInt(Math.sqrt(a*a + b*b));
 }
 
-function calculateNewCoordinates(origin, angle, length, quadrant, modifiedAngle, prev) {
-  let x;
-  let y;
+function calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, modifiedAngle, prev) {
+  let finalAngle = modifiedAngle || angle;
 
-  const finalAngle = modifiedAngle || angle;
-
-  // switch (quadrant) {
-  //   case 1:
-  //   case 2: {
-      // x = origin.x + (Math.cos((finalAngle * Math.PI)/180) * length);
-      // y = origin.y - (Math.sin((finalAngle * Math.PI)/180) * length);
-  //     break;
-  //   }
-  //   case 3:
-  //   case 4: {
-      x = origin.x + (Math.cos((finalAngle * Math.PI)/180) * length);
-      y = origin.y + (Math.sin((finalAngle * Math.PI)/180) * length);
-  //     break;
-  //   }
-  //   default: {
-  //     console.log('error', quadrant);
-  //     break;
-  //   }
-  // }
+  switch (quadrant) {
+    case 1:
+    case 2: {
+      finalAngle -= baseAngle;
+      break;
+    }
+    case 3:
+    case 4: {
+      finalAngle += baseAngle;
+      break;
+    }
+    default: {
+      console.log('error', quadrant);
+      break;
+    }
+  }
+  const x = origin.x + (Math.cos((finalAngle * Math.PI)/180) * length);
+  const y = origin.y + (Math.sin((finalAngle * Math.PI)/180) * length);
 
   const result = { x, y };
   // const newAngle = calculateDegrees(prev, origin, result);
 
   // if (newAngle < angle) {
   //   const a = finalAngle + 0.01;
-  //   return calculateNewCoordinates(origin, angle, length, quadrant, a, prev);
+  //   return calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, a, prev);
   // } else if (newAngle > angle) {
   //   const a = finalAngle - 0.01;
-  //   return calculateNewCoordinates(origin, angle, length, quadrant, a, prev);
+  //   return calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, a, prev);
   // }
 
   return result;
