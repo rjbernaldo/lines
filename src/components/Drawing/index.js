@@ -168,9 +168,10 @@ class Drawing extends React.Component {
   }
 
   renderAnchors(k, i) {
-    const { deletePoint, mode, points } = this.props;
+    const { deletePoint, mode, points, modifyPoint } = this.props;
     const { id, x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(points[k]);
+    const nextId = connections[1];
 
     const prev = connections[0]
       ? points[connections[0]]
@@ -197,6 +198,9 @@ class Drawing extends React.Component {
         next={next}
         handleMouseDown={handleMouseDown}
         mode={mode}
+        modifyPoint={(x, y) => {
+          modifyPoint(nextId, x, y);
+        }}
       />
     );
   }

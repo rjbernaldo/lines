@@ -32,7 +32,7 @@ class Anchor extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    const { modifyPoint, current, next } = this.props;
+    const { modifyPoint, x, y, prev, next } = this.props;
 
     if (isNaN(this.state.input)) {
       alert('Please enter a valid integer.');
@@ -42,14 +42,12 @@ class Anchor extends React.Component {
       this.setState({
         input: null,
       }, () => {
-        const a = straightPoint;
-        const b = current;
+        const a = prev;
+        const b = { x, y };
         const c = next;
-        const length = calculateDegrees(straightPoint, current, next);
-
-        console.log(modifiedAngle);
-        const quadrant = calculateQuadrant(current, next);
-        const coords = calculateNewCoordinates(current, modifiedAngle, length, quadrant);
+        const length = calculateLength(b, c);
+        const quadrant = calculateQuadrant(b, c);
+        const coords = calculateNewCoordinates(b, modifiedAngle, length, quadrant);
 
         modifyPoint(coords.x, coords.y);
       });
@@ -141,6 +139,52 @@ class Anchor extends React.Component {
 
 export default Anchor;
 
+function calculateLength(c, n) {
+  const a = c.x - n.x;
+  const b = c.y - n.y;
+
+  return parseInt(Math.sqrt(a*a + b*b));
+}
+
+function calculateNewCoordinates(origin, angle, length, quadrant, modifiedLength) {
+  let x;
+  let y;
+
+  const finalLength = modifiedLength || length;
+
+  switch (quadrant) {
+    case 1:
+    case 2: {
+      x = origin.x + (Math.cos((angle * Math.PI)/180) * finalLength);
+      y = origin.y - (Math.sin((angle * Math.PI)/180) * finalLength);
+      break;
+    }
+    case 3:
+    case 4: {
+      x = origin.x + (Math.cos((angle * Math.PI)/180) * finalLength);
+      y = origin.y + (Math.sin((angle * Math.PI)/180) * finalLength);
+      break;
+    }
+    default: {
+      console.log('error', quadrant);
+      break;
+    }
+  }
+
+  const result = { x, y };
+  const newLength = calculateLength(origin, result);
+
+  if (newLength < length) {
+    const l = finalLength + 0.01;
+    return calculateNewCoordinates(origin, angle, length, quadrant, l);
+  } else if (newLength > length) {
+    const l = finalLength - 0.01;
+    return calculateNewCoordinates(origin, angle, length, quadrant, l);
+  }
+
+  return result;
+}
+
 function calculateDegrees(A, B, C) {
   if (A && B && C) {
     const AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
@@ -152,4 +196,13 @@ function calculateDegrees(A, B, C) {
   }
 
   return null;
+}
+
+function calculateQuadrant(c, n) {
+  if (c.x < n.x && c.y > n.y) return 1;
+  if (c.x > n.x && c.y > n.y) return 2;
+  if (c.x > n.x && c.y < n.y) return 3;
+  if (c.x < n.x && c.y < n.y) return 4;
+
+  return 0;
 }

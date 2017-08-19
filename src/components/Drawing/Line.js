@@ -46,7 +46,6 @@ class Line extends React.Component {
         const b = current;
         const c = next;
         const angle = calculateDegrees(a, b, c);
-
         const quadrant = calculateQuadrant(b, c);
         const coords = calculateNewCoordinates(b, angle, reducedLength, quadrant);
 
