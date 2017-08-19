@@ -49,7 +49,15 @@ class Drawing extends React.Component {
     }
   }
 
-  anchorMouseDown(p) {
+  lineMouseDown(p) {
+    return (e) => {
+      if (e.nativeEvent.which === 3) return;
+
+      const { mode, points, modifyPoint } = this.props;
+    };
+  }
+
+  anchorMouseDown(id) {
     return (e) => {
       if (e.nativeEvent.which === 3) return;
 
@@ -57,7 +65,6 @@ class Drawing extends React.Component {
       const selectMode = mode === 'SELECT';
       const drawMode = mode === 'DRAW';
 
-      const id = Object.keys(points).filter(k => points[k] === p)[0];
       const lastId = this.state.origin.id;
       const { x, y, connections } = points[id];
       const origin = { id, x, y };
@@ -170,7 +177,7 @@ class Drawing extends React.Component {
   renderAnchors(k, i) {
     const { deletePoint, mode, points, modifyPoint } = this.props;
     const { id, x, y, connections } = points[k];
-    const handleMouseDown = this.anchorMouseDown(points[k]);
+    const handleMouseDown = this.anchorMouseDown(id);
     const nextId = connections[1];
 
     const prev = connections[0]
@@ -184,8 +191,9 @@ class Drawing extends React.Component {
         : null;
 
     const deleteAnchor = (e) => {
+      const { mode } = this.props;
       e.preventDefault();
-      deletePoint(id);
+      if (mode === 'SELECT') deletePoint(id);
     };
 
     return (
