@@ -9,6 +9,7 @@ class Anchor extends React.Component {
 
     this.state = {
       hover: false,
+      input: null,
     };
   }
 
@@ -18,6 +19,28 @@ class Anchor extends React.Component {
 
   handleMouseLeave() {
     this.setState({ hover: false });
+  }
+
+  handleRightClick(e) {
+    e.preventDefault();
+    this.setState({ input: '' });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+
+    const { modifyPoint, current, next } = this.props;
+
+    if (isNaN(this.state.input)) {
+      alert('Please enter a valid integer.');
+    } else {
+    }
+  }
+
+  handleChange(e) {
+    this.setState({
+      input: e.target.value,
+    });
   }
 
   render() {
