@@ -6,6 +6,9 @@ class Anchor extends React.Component {
 
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.handleRightClick = this.handleRightClick.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
 
     this.state = {
       hover: false,
@@ -34,6 +37,13 @@ class Anchor extends React.Component {
     if (isNaN(this.state.input)) {
       alert('Please enter a valid integer.');
     } else {
+      const modifiedAngle = parseInt(this.state.input);
+
+      this.setState({
+        input: null,
+      }, () => {
+        console.log(modifiedAngle);
+      });
     }
   }
 
@@ -51,21 +61,45 @@ class Anchor extends React.Component {
     let text;
 
     if (degrees) {
-      text = (
-        <text
-          style={{
-            WebkitUserSelect: 'none',
-          }}
-          x={x - 25}
-          y={y - 25}
-          fontFamily="sans-serif"
-          fontSize="12px"
-          stroke="none"
-          fill="black"
-        >
-          {degrees}º
-        </text>
-      );
+      if (this.state.input === null) {
+        text = (
+          <text
+          onContextMenu={this.handleRightClick}
+            style={{
+              WebkitUserSelect: 'none',
+            }}
+            x={x - 25}
+            y={y - 25}
+            fontFamily="sans-serif"
+            fontSize="12px"
+            stroke="none"
+            fill="black"
+          >
+            {degrees}º
+          </text>
+        );
+      } else {
+        text = (
+          <foreignObject
+            x={x - 25}
+            y={y - 25}
+            fontFamily="sans-serif"
+            fontSize="12px"
+            stroke="none"
+            fill="black"
+          >
+            <form
+              onSubmit={this.handleSubmit}
+            >
+              <input
+                onChange={this.handleChange}
+                ref={(input) => { if (input) input.focus(); }}
+                style={{ padding: '0px' }}
+              />
+            </form>
+          </foreignObject>
+        );
+      }
     }
 
     const stroke = this.state.hover && this.props.mode === 'SELECT'
