@@ -42,7 +42,16 @@ class Anchor extends React.Component {
       this.setState({
         input: null,
       }, () => {
+        const a = straightPoint;
+        const b = current;
+        const c = next;
+        const length = calculateDegrees(straightPoint, current, next);
+
         console.log(modifiedAngle);
+        const quadrant = calculateQuadrant(current, next);
+        const coords = calculateNewCoordinates(current, modifiedAngle, length, quadrant);
+
+        modifyPoint(coords.x, coords.y);
       });
     }
   }

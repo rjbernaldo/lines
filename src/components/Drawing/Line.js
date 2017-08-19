@@ -42,13 +42,14 @@ class Line extends React.Component {
       this.setState({
         input: null,
       }, () => {
-        const straightPoint = {
-          x: current.x + 180,
-          y: current.y,
-        };
-        const quadrant = calculateQuadrant(current, next);
-        const angle = calculateDegrees(straightPoint, current, next);
-        const coords = calculateNewCoordinates(current, angle, reducedLength, quadrant);
+        const a = { x: current.x + 180, y: current.y };
+        const b = current;
+        const c = next;
+        const angle = calculateDegrees(a, b, c);
+
+        const quadrant = calculateQuadrant(b, c);
+        const coords = calculateNewCoordinates(b, angle, reducedLength, quadrant);
+
         modifyPoint(coords.x, coords.y);
       });
     }
