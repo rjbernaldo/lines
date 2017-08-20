@@ -49,11 +49,16 @@ class Drawing extends React.Component {
     }
   }
 
-  lineMouseDown(p) {
+  lineMouseDown(ids) {
     return (e) => {
       if (e.nativeEvent.which === 3) return;
 
       const { mode, points, modifyPoint } = this.props;
+      const selectMode = mode === 'SELECT';
+
+      if (selectMode) {
+        this.setState({ lineDragging: true })
+      }
     };
   }
 
@@ -133,6 +138,8 @@ class Drawing extends React.Component {
         default: {
         }
       }
+    } else if (this.state.lineDragging) {
+      this.setState({ lineDragging: false });
     } else if (!this.state.dragging) {
       setDraw();
 
@@ -168,6 +175,10 @@ class Drawing extends React.Component {
       } else if (this.state.touched) {
         this.setState({ dragging: true });
       }
+    } else if (this.state.lineDragging) {
+      this.state.lines.forEach((id) => {
+        modifyPoint(this.state.origin.id)
+      });
     } else {
       const mouse = { x, y };
       this.setState({ mouse });
