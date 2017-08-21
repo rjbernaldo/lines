@@ -274,6 +274,7 @@ class Drawing extends React.Component {
 
     return (
       <svg
+        onContextMenu={(e) => { e.preventDefault(); }}
         style={style}
         height="100%"
         width="100%"
