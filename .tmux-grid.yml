@@ -1,0 +1,5 @@
+name: lines
+command: split-v
+panes:
+  - command: git status
+  - command: npm run dev
