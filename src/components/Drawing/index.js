@@ -186,7 +186,7 @@ class Drawing extends React.Component {
   }
 
   renderAnchors(k, i) {
-    const { deletePoint, mode, points, modifyPoint } = this.props;
+    const { deletePoints, mode, points, modifyPoint } = this.props;
     const { id, x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(id);
     const nextId = connections[1];
@@ -202,14 +202,15 @@ class Drawing extends React.Component {
         : null;
 
     const deleteAnchor = (e) => {
-      const { mode } = this.props;
       e.preventDefault();
-      if (mode === 'SELECT') deletePoint(id);
+
+      const { mode } = this.props;
+      if (mode === 'SELECT') deletePoints([id]);
     };
 
     return (
       <Anchor
-        onContextMenu={deleteAnchor}
+        deleteAnchor={deleteAnchor}
         key={i}
         x={x}
         y={y}
@@ -225,9 +226,16 @@ class Drawing extends React.Component {
   }
 
   renderLines(line, i) {
-    const { points, mode, modifyPoint } = this.props;
+    const { deletePoints, points, mode, modifyPoint } = this.props;
     const currentId = line[0];
     const nextId = line[1];
+
+    const deleteConnection = (e) => {
+      e.preventDefault();
+
+      const { mode } = this.props;
+      if (mode === 'SELECT') deletePoints(line);
+    }
 
     if (nextId) {
       const current = points[currentId];
@@ -235,6 +243,7 @@ class Drawing extends React.Component {
 
       return (
         <Line
+          deleteConnection={deleteConnection}
           key={i}
           current={current}
           next={next}

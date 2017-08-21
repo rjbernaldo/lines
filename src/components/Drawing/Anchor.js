@@ -70,7 +70,7 @@ class Anchor extends React.Component {
   }
 
   render() {
-    const { x, y, handleMouseDown, onContextMenu, prev, next } = this.props;
+    const { x, y, handleMouseDown, deleteAnchor, prev, next } = this.props;
 
     const degrees = calculateDegrees(prev, { x, y }, next);
 
@@ -80,7 +80,7 @@ class Anchor extends React.Component {
       if (this.state.input === null) {
         text = (
           <text
-          onContextMenu={this.handleRightClick}
+            onContextMenu={this.handleRightClick}
             style={{
               WebkitUserSelect: 'none',
             }}
@@ -129,7 +129,7 @@ class Anchor extends React.Component {
     return (
       <g>
         <circle
-          onContextMenu={onContextMenu}
+          onContextMenu={deleteAnchor}
           onMouseDown={handleMouseDown}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
