@@ -26,6 +26,8 @@ class Drawing extends React.Component {
       origin: {},
       mouse: {},
       edit: {},
+      lineDragging: false,
+      line: null,
     };
   }
 
@@ -49,15 +51,22 @@ class Drawing extends React.Component {
     }
   }
 
-  lineMouseDown(ids) {
+  lineMouseDown(line) {
     return (e) => {
       if (e.nativeEvent.which === 3) return;
 
       const { mode, points, modifyPoint } = this.props;
       const selectMode = mode === 'SELECT';
 
+      const { x, y } = this.calculateCoords(e);
+      const origin = { x, y };
+
       if (selectMode) {
-        this.setState({ lineDragging: true })
+        this.setState({
+          lineDragging: true,
+          line,
+          origin,
+        });
       }
     };
   }
@@ -139,7 +148,7 @@ class Drawing extends React.Component {
         }
       }
     } else if (this.state.lineDragging) {
-      this.setState({ lineDragging: false });
+      this.setState({ lineDragging: false, line: null });
     } else if (!this.state.dragging) {
       setDraw();
 
@@ -164,7 +173,7 @@ class Drawing extends React.Component {
   }
 
   handleMouseMove(e) {
-    const { mode, modifyPoint } = this.props;
+    const { mode, modifyPoint, points } = this.props;
     const selectMode = mode === 'SELECT';
 
     const { x, y } = this.calculateCoords(e);
@@ -174,11 +183,21 @@ class Drawing extends React.Component {
         modifyPoint(this.state.origin.id, x, y);
       } else if (this.state.touched) {
         this.setState({ dragging: true });
+      } else if (this.state.lineDragging) {
+        const delta = {
+          x: x - this.state.origin.x,
+          y: y - this.state.origin.y,
+        };
+
+        const origin = { x, y };
+
+        this.state.line.forEach((id) => {
+          const current = points[id];
+          this.setState({ origin }, () => {
+            modifyPoint(id, current.x + delta.x, current.y + delta.y);
+          });
+        });
       }
-    } else if (this.state.lineDragging) {
-      this.state.lines.forEach((id) => {
-        modifyPoint(this.state.origin.id)
-      });
     } else {
       const mouse = { x, y };
       this.setState({ mouse });
@@ -227,6 +246,7 @@ class Drawing extends React.Component {
 
   renderLines(line, i) {
     const { deletePoints, points, mode, modifyPoint } = this.props;
+    const handleMouseDown = this.lineMouseDown(line);
     const currentId = line[0];
     const nextId = line[1];
 
@@ -243,6 +263,7 @@ class Drawing extends React.Component {
 
       return (
         <Line
+          handleMouseDown={handleMouseDown}
           deleteConnection={deleteConnection}
           key={i}
           current={current}

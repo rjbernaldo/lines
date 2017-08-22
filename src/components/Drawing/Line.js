@@ -61,7 +61,7 @@ class Line extends React.Component {
   }
 
   render() {
-    const { i, current, next, deleteConnection } = this.props;
+    const { i, current, next, deleteConnection, handleMouseDown } = this.props;
 
     const mid = calculateMidPoint(current, next);
     let text;
@@ -113,6 +113,7 @@ class Line extends React.Component {
     return (
       <g>
         <path
+          onMouseDown={handleMouseDown}
           onContextMenu={deleteConnection}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
