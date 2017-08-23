@@ -49,14 +49,7 @@ class Anchor extends React.Component {
         const baseAngle = calculateDegrees(a, b, { x: x + 180, y });
         const length = calculateLength(b, c);
         const quadrant = calculateQuadrant(b, c);
-        // const relativeAngle = modifiedAngle - baseAngle;
         const coords = calculateNewCoordinates(b, baseAngle, modifiedAngle, length, quadrant, null, a);
-
-        // console.log(`quadrant: ${quadrant}`);
-        // console.log(`current: ${currentAngle}`);
-        // console.log(`modified: ${modifiedAngle}`);
-        // console.log(`base: ${baseAngle}`);
-        // console.log(`relative: ${relativeAngle}`);
 
         modifyPoint(coords.x, coords.y);
       });
@@ -178,15 +171,15 @@ function calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, mod
   const y = origin.y + (Math.sin((finalAngle * Math.PI)/180) * length);
 
   const result = { x, y };
-  // const newAngle = calculateDegrees(prev, origin, result);
-
-  // if (newAngle < angle) {
-  //   const a = finalAngle + 0.01;
-  //   return calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, a, prev);
-  // } else if (newAngle > angle) {
-  //   const a = finalAngle - 0.01;
-  //   return calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, a, prev);
-  // }
+//   const newAngle = calculateDegrees(prev, origin, result);
+// console.log(newAngle);
+//   if (newAngle < angle) {
+//     const a = finalAngle + 0.01;
+//     return calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, a, prev);
+//   } else if (newAngle > angle) {
+//     const a = finalAngle - 0.01;
+//     return calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, a, prev);
+//   }
 
   return result;
 }
