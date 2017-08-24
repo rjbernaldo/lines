@@ -134,9 +134,10 @@ class Anchor extends React.Component {
           cx={x}
           cy={y}
           stroke={stroke}
-          strokeWidth="3"
+          strokeWidth="1"
           fill={fill}
-          r="5"
+          fillOpacity="0.1"
+          r="10"
         />
         { text }
       </g>

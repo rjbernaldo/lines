@@ -19,6 +19,9 @@ const Sidebar = ({ mode, toggleMode }) => {
         <GParagraph size="small" style={style}>Click & Drag Anchor: Move anchor</GParagraph>
         <GParagraph size="small" style={style}>Right Click Anchor: Delete anchor</GParagraph>
         <GParagraph size="small" style={style}>Right Click Length: Edit length</GParagraph>
+        <GParagraph size="small" style={style}>Click & Drag Line: Move line</GParagraph>
+        <GParagraph size="small" style={style}>Right Click Line: Delete line</GParagraph>
+        <GParagraph size="small" style={style}>Right Click Angle: Edit angle</GParagraph>
       </GBox>
       <CLineList />
     </GBox>
