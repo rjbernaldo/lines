@@ -68,7 +68,7 @@ class Anchor extends React.Component {
   }
 
   render() {
-    const { x, y, handleMouseDown, deleteAnchor, prev, next } = this.props;
+    const { x, y, handleMouseDown, deleteAnchor, prev, next, mode } = this.props;
 
     const degrees = calculateDegrees(prev, { x, y }, next);
 
@@ -116,11 +116,11 @@ class Anchor extends React.Component {
       }
     }
 
-    const stroke = this.state.hover && this.props.mode === 'SELECT'
+    const stroke = this.state.hover && mode === 'SELECT'
         ? 'blue'
         : 'black';
 
-    const fill = this.state.hover && this.props.mode === 'SELECT'
+    const fill = this.state.hover && mode === 'SELECT'
         ? 'blue'
         : 'white';
 
