@@ -140,6 +140,20 @@ class Anchor extends React.Component {
           r="10"
         />
         { text }
+        {/* <text
+          onContextMenu={this.handleRightClick}
+          style={{
+            WebkitUserSelect: 'none',
+          }}
+          x={x - 25}
+          y={y - 25}
+          fontFamily="sans-serif"
+          fontSize="12px"
+          stroke="none"
+          fill="black"
+        >
+          {x}, {y}
+        </text> */}
       </g>
     );
   }
@@ -149,12 +163,28 @@ export default Anchor;
 
 function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
   const baseAngle = calculateDegrees(a, b, c);
-  const newAngle = baseAngle - (compensatedAngle || modifiedAngle);
+
+  let newAngle = baseAngle - (compensatedAngle || modifiedAngle);
+
+  const foo = (Math.atan2(a.y - b.y, a.x - b.x) * 180 / Math.PI + 180);
+  const bar = (Math.atan2(c.y - b.y, c.x - b.x) * 180 / Math.PI + 180);
+  const result = bar - foo;
+
+  if (result <= 90 && result > 0) {
+  } else if (result <= 180 && result > 90) {
+  } else if (result >= -90 && result < 0) {
+    newAngle = 0 - newAngle;
+  } else {
+    newAngle = 0 - newAngle;
+  }
 
   const newCoords = rotate(b.x, b.y, c.x, c.y, newAngle);
-  const updatedAngle = calculateDegrees(a, b, newCoords);
+  // const updatedAngle = calculateDegrees(a, b, newCoords);
 
-  console.log(updatedAngle, modifiedAngle, newAngle);
+  // console.log('baseAngle', baseAngle);
+  // console.log('modifiedAngle', modifiedAngle);
+  // console.log('angle', angle);
+  // console.log('updatedAngle', updatedAngle);
 
   // const absModifiedAngle = Math.abs(modifiedAngle);
 
@@ -194,22 +224,10 @@ function calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, mod
     }
   }
 
-  console.log('baseAngle', baseAngle);
-  console.log('finalAngle', finalAngle);
-
   const x = origin.x + (Math.cos((finalAngle * Math.PI)/180) * length);
   const y = origin.y + (Math.sin((finalAngle * Math.PI)/180) * length);
 
   const result = { x, y };
-//   const newAngle = calculateDegrees(prev, origin, result);
-// console.log(newAngle);
-//   if (newAngle < angle) {
-//     const a = finalAngle + 0.01;
-//     return calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, a, prev);
-//   } else if (newAngle > angle) {
-//     const a = finalAngle - 0.01;
-//     return calculateNewCoordinates(origin, baseAngle, angle, length, quadrant, a, prev);
-//   }
 
   return result;
 }
@@ -220,8 +238,9 @@ function calculateDegrees(A, B, C) {
     const BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
     const AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
     const angle = Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
+    const degrees = Math.floor(angle * 180 / Math.PI);
 
-    return Math.floor(angle * 180 / Math.PI);
+    return degrees;
   }
 
   return null;
@@ -238,6 +257,7 @@ function calculateQuadrant(c, n) {
 
 function rotate(cx, cy, nx, ny, angle) {
   const radians = (Math.PI / 180) * angle;
+
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);
   const x = (cos * (nx - cx)) + (sin * (ny - cy)) + cx;
