@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import GBox from 'grommet/components/Box';
+
 class Line extends React.Component {
   constructor(props) {
     super(props);
@@ -26,13 +28,30 @@ class Line extends React.Component {
 
   handleRightClick(e) {
     e.preventDefault();
-    this.setState({ input: '' });
+
+    const { openModal } = this.props;
+
+    this.setState({ input: '' }, () => {
+      const form = (
+        <GBox pad="medium">
+          Enter new length:
+          <form onSubmit={this.handleSubmit}>
+            <input
+              onChange={this.handleChange}
+              ref={(input) => { if (input) setTimeout(() => input.focus(), 0); }}
+            />
+          </form>
+        </GBox>
+      );
+
+      openModal(form);
+    });
   }
 
   handleSubmit(e) {
     e.preventDefault();
 
-    const { modifyPoint, current, next } = this.props;
+    const { modifyPoint, current, next, closeModal } = this.props;
 
     if (isNaN(this.state.input)) {
       alert('Please enter a valid integer.');
@@ -50,6 +69,7 @@ class Line extends React.Component {
         const coords = calculateNewCoordinates(b, angle, reducedLength, quadrant);
 
         modifyPoint(coords.x, coords.y);
+        closeModal();
       });
     }
   }
@@ -84,7 +104,6 @@ class Line extends React.Component {
         </text>
       );
     } else {
-      openModal('line');
       //    text = (
       //      <foreignObject
       //        x={mid.x - 25}

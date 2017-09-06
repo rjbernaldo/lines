@@ -247,7 +247,7 @@ class Drawing extends React.Component {
   }
 
   renderLines(line, i) {
-    const { deletePoints, points, mode, modifyPoint, openModal } = this.props;
+    const { deletePoints, points, mode, modifyPoint, openModal, closeModal } = this.props;
     const handleMouseDown = this.lineMouseDown(line);
     const currentId = line[0];
     const nextId = line[1];
@@ -266,6 +266,7 @@ class Drawing extends React.Component {
       return (
         <Line
           openModal={openModal}
+          closeModal={closeModal}
           handleMouseDown={handleMouseDown}
           deleteConnection={deleteConnection}
           key={i}
