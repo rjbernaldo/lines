@@ -7,13 +7,12 @@ const initialState = {
 export default function (state = initialState, action) {
   switch (action.type) {
     case OPEN_MODAL: {
-      console.log('open modal?', action);
       return Object.assign({}, state, {
         open: true,
+        form: action.form,
       });
     }
     case SUBMIT_MODAL: {
-      console.log(action.data);
       return Object.assign({}, state, {
         open: false,
       });

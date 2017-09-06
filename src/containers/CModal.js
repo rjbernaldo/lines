@@ -5,6 +5,7 @@ import { submitModal } from '../actions/modal';
 const mapStateToProps = (state) => {
   return {
     open: state.modal.open,
+    form: state.modal.form,
   };
 };
 

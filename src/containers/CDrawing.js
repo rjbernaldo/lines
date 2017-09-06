@@ -28,8 +28,8 @@ const mapDispatchToProps = (dispatch) => {
     setDraw: () => {
       dispatch(setDraw());
     },
-    openModal: () => {
-      dispatch(openModal());
+    openModal: (form) => {
+      dispatch(openModal(form));
     },
   };
 };

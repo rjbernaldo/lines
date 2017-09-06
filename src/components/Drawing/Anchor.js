@@ -27,9 +27,19 @@ class Anchor extends React.Component {
   handleRightClick(e) {
     e.preventDefault();
     const { openModal } = this.props;
-    console.log('test');
-    openModal('anchor');
-    // this.setState({ input: '' });
+    this.setState({ input: '' }, () => {
+      const form = (
+        <form onSubmit={this.handleSubmit}>
+          <input
+            onChange={this.handleChange}
+            ref={(input) => { if (input) input.focus() }}
+            style={{ padding: '0px' }}
+          />
+        </form>
+      );
+
+      openModal(form);
+    });
   }
 
   handleSubmit(e) {
@@ -49,15 +59,7 @@ class Anchor extends React.Component {
         const b = { x, y };
         const c = next;
 
-        // const baseAngle = calculateDegrees(a, b, { x: x + 180, y });
-        // const length = calculateLength(b, c);
-        // const quadrant = calculateQuadrant(b, c);
-        // const coords = calculateNewCoordinates(b, baseAngle, modifiedAngle, length, quadrant, null, a);
-        // const baseAngle = calculateDegrees(a, b, c);
-        // const newAngle = baseAngle - modifiedAngle;
-
         const coords = calculateNewCoords(a, b, c, modifiedAngle);
-        // const coords = rotate(b.x, b.y, c.x, c.y, newAngle);
 
         modifyPoint(coords.x, coords.y);
       });
@@ -96,7 +98,6 @@ class Anchor extends React.Component {
           </text>
         );
       } else {
-        openModal('anchor');
         //        text = (
         //          <foreignObject
         //            x={x - 25}
