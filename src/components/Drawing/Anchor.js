@@ -26,7 +26,10 @@ class Anchor extends React.Component {
 
   handleRightClick(e) {
     e.preventDefault();
-    this.setState({ input: '' });
+    const { openModal } = this.props;
+    console.log('test');
+    openModal('anchor');
+    // this.setState({ input: '' });
   }
 
   handleSubmit(e) {
@@ -68,7 +71,7 @@ class Anchor extends React.Component {
   }
 
   render() {
-    const { x, y, handleMouseDown, deleteAnchor, prev, next, mode } = this.props;
+    const { x, y, handleMouseDown, deleteAnchor, prev, next, mode, openModal } = this.props;
 
     const degrees = calculateDegrees(prev, { x, y }, next);
 
@@ -93,26 +96,27 @@ class Anchor extends React.Component {
           </text>
         );
       } else {
-        text = (
-          <foreignObject
-            x={x - 25}
-            y={y - 25}
-            fontFamily="sans-serif"
-            fontSize="12px"
-            stroke="none"
-            fill="black"
-          >
-            <form
-              onSubmit={this.handleSubmit}
-            >
-              <input
-                onChange={this.handleChange}
-                ref={(input) => { if (input) input.focus(); }}
-                style={{ padding: '0px' }}
-              />
-            </form>
-          </foreignObject>
-        );
+        openModal('anchor');
+        //        text = (
+        //          <foreignObject
+        //            x={x - 25}
+        //            y={y - 25}
+        //            fontFamily="sans-serif"
+        //            fontSize="12px"
+        //            stroke="none"
+        //            fill="black"
+        //          >
+        //            <form
+        //              onSubmit={this.handleSubmit}
+        //            >
+        //              <input
+        //                onChange={this.handleChange}
+        //                ref={(input) => { if (input) input.focus(); }}
+        //                style={{ padding: '0px' }}
+        //              />
+        //            </form>
+        //          </foreignObject>
+        // );
       }
     }
 

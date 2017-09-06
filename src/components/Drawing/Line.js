@@ -61,7 +61,7 @@ class Line extends React.Component {
   }
 
   render() {
-    const { i, current, next, deleteConnection, handleMouseDown } = this.props;
+    const { i, current, next, deleteConnection, handleMouseDown, openModal } = this.props;
 
     const mid = calculateMidPoint(current, next);
     let text;
@@ -84,26 +84,27 @@ class Line extends React.Component {
         </text>
       );
     } else {
-      text = (
-        <foreignObject
-          x={mid.x - 25}
-          y={mid.y - 25}
-          fontFamily="sans-serif"
-          fontSize="12px"
-          stroke="none"
-          fill="black"
-        >
-          <form
-            onSubmit={this.handleSubmit}
-          >
-            <input
-              onChange={this.handleChange}
-              ref={(input) => { if (input) input.focus(); }}
-              style={{ padding: '0px' }}
-            />
-          </form>
-        </foreignObject>
-      );
+      openModal('line');
+      //    text = (
+      //      <foreignObject
+      //        x={mid.x - 25}
+      //        y={mid.y - 25}
+      //        fontFamily="sans-serif"
+      //        fontSize="12px"
+      //        stroke="none"
+      //        fill="black"
+      //      >
+      //        <form
+      //          onSubmit={this.handleSubmit}
+      //        >
+      //          <input
+      //            onChange={this.handleChange}
+      //            ref={(input) => { if (input) input.focus(); }}
+      //            style={{ padding: '0px' }}
+      //          />
+      //        </form>
+      //      </foreignObject>
+      //    );
     }
 
     const stroke = this.state.hover && this.props.mode === 'SELECT'

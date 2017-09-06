@@ -205,7 +205,7 @@ class Drawing extends React.Component {
   }
 
   renderAnchors(k, i) {
-    const { deletePoints, mode, points, modifyPoint } = this.props;
+    const { deletePoints, mode, points, modifyPoint, openModal } = this.props;
     const { id, x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(id);
     const nextId = connections[1];
@@ -229,6 +229,7 @@ class Drawing extends React.Component {
 
     return (
       <Anchor
+        openModal={openModal}
         deleteAnchor={deleteAnchor}
         key={i}
         x={x}
@@ -245,7 +246,7 @@ class Drawing extends React.Component {
   }
 
   renderLines(line, i) {
-    const { deletePoints, points, mode, modifyPoint } = this.props;
+    const { deletePoints, points, mode, modifyPoint, openModal } = this.props;
     const handleMouseDown = this.lineMouseDown(line);
     const currentId = line[0];
     const nextId = line[1];
@@ -263,6 +264,7 @@ class Drawing extends React.Component {
 
       return (
         <Line
+          openModal={openModal}
           handleMouseDown={handleMouseDown}
           deleteConnection={deleteConnection}
           key={i}
