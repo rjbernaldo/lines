@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import Drawing from '../components/Drawing/index';
 import { addPoint, modifyPoint, deletePoints } from '../actions/drawing';
 import { setDraw, setSelect } from '../actions/mode';
-import { openModal } from '../actions/modal';
+import { openModal, closeModal } from '../actions/modal';
 
 const mapStateToProps = (state) => {
   return {
@@ -30,6 +30,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     openModal: (form) => {
       dispatch(openModal(form));
+    },
+    closeModal: () => {
+      dispatch(closeModal());
     },
   };
 };

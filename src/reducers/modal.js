@@ -1,4 +1,4 @@
-import { OPEN_MODAL, SUBMIT_MODAL } from '../actions/modal';
+import { OPEN_MODAL, CLOSE_MODAL } from '../actions/modal';
 
 const initialState = {
   open: false,
@@ -12,7 +12,7 @@ export default function (state = initialState, action) {
         form: action.form,
       });
     }
-    case SUBMIT_MODAL: {
+    case CLOSE_MODAL: {
       return Object.assign({}, state, {
         open: false,
       });

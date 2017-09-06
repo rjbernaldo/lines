@@ -22,7 +22,6 @@ class Modal extends React.Component {
       return (
         <GLayer>
           { this.props.form }
-          <input type="button" onClick={this.handleClick} />
         </GLayer>
       );
     } else {

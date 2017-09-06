@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import GBox from 'grommet/components/Box';
+
 class Anchor extends React.Component {
   constructor(props) {
     super(props);
@@ -29,13 +31,15 @@ class Anchor extends React.Component {
     const { openModal } = this.props;
     this.setState({ input: '' }, () => {
       const form = (
-        <form onSubmit={this.handleSubmit}>
-          <input
-            onChange={this.handleChange}
-            ref={(input) => { if (input) input.focus() }}
-            style={{ padding: '0px' }}
-          />
-        </form>
+        <GBox pad="medium">
+          Enter new angle:
+          <form onSubmit={this.handleSubmit}>
+            <input
+              onChange={this.handleChange}
+              ref={(input) => { if (input) setTimeout(() => input.focus(), 0); }}
+            />
+          </form>
+        </GBox>
       );
 
       openModal(form);
@@ -45,7 +49,7 @@ class Anchor extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    const { modifyPoint, x, y, prev, next } = this.props;
+    const { modifyPoint, x, y, prev, next, closeModal } = this.props;
 
     if (isNaN(this.state.input)) {
       alert('Please enter a valid integer.');
@@ -62,6 +66,8 @@ class Anchor extends React.Component {
         const coords = calculateNewCoords(a, b, c, modifiedAngle);
 
         modifyPoint(coords.x, coords.y);
+
+        closeModal();
       });
     }
   }
