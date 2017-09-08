@@ -47,6 +47,7 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "grommet": "^1.4.1",
+    "now-logs": "0.0.7",
     "react": "^15.5.4",
     "react-addons-update": "^15.6.0",
     "react-dom": "^15.5.4",
