@@ -25,9 +25,9 @@ const mapStateToProps = (state) => {
         const length = calculateLength(c, n);
 
         return length;
-      } else {
-        return 0;
       }
+
+      return 0;
     }).reduce((a, b) => a + b, 0),
   };
 };
