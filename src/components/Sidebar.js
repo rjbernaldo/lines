@@ -7,9 +7,7 @@ import GHeading from 'grommet/components/Heading';
 import CLineList from '../containers/CLineList';
 
 const Sidebar = ({ mode, toggleMode }) => {
-  const style = { 
-    padding: '0px', margin: '0px', marginBottom: '5px', WebkitUserSelect: 'none',
-  };
+  const style = { padding: '0px', margin: '0px', marginBottom: '5px', WebkitUserSelect: 'none' };
   return (
     <GBox style={{ width: '300px' }}>
       <GBox pad="medium">
