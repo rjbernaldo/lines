@@ -304,6 +304,8 @@ class Drawing extends React.Component {
           />
         );
       }
+
+      return <span />;
     };
 
     return (
