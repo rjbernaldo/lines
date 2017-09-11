@@ -5,7 +5,7 @@ import GApp from 'grommet/components/App';
 import GBox from 'grommet/components/Box';
 import GSplit from 'grommet/components/Split';
 
-import Home from './Home';
+import CHome from '../containers/CHome';
 import CSidebar from '../containers/CSidebar';
 
 const App = () => (
@@ -13,7 +13,7 @@ const App = () => (
     <GSplit flex="left">
       <GBox>
         <Switch>
-          <Route exact path="/" component={Home} />
+          <Route exact path="/" component={CHome} />
         </Switch>
       </GBox>
       <GBox colorIndex="light-2" full="vertical">

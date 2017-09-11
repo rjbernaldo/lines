@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import GBox from 'grommet/components/Box';
 import GHeading from 'grommet/components/Heading';
 import GParagraph from 'grommet/components/Paragraph';
+import GButton from 'grommet/components/Button';
+
 import CDrawing from '../containers/CDrawing';
 import CModal from '../containers/CModal';
 
@@ -12,7 +14,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    // const { openModal } = this.props;
+    const { openModal, closeModal } = this.props;
     const style = { padding: '0px', margin: '0px', marginBottom: '5px', WebkitUserSelect: 'none' };
     const form = (
       <GBox style={{ width: '300px' }}>
@@ -26,11 +28,12 @@ class Home extends React.Component {
           <GParagraph size="small" style={style}>Click & Drag Line: Move line</GParagraph>
           <GParagraph size="small" style={style}>Right Click Line: Delete line</GParagraph>
           <GParagraph size="small" style={style}>Right Click Angle: Edit angle</GParagraph>
+          <GButton type="button" onClick={() => { closeModal(); }}>Close</GButton>
         </GBox>
       </GBox>
     );
 
-    //openModal(form);
+    openModal(form);
   }
 
   render() {
