@@ -274,7 +274,12 @@ class Drawing extends React.Component {
           next={next}
           mode={mode}
           modifyPoint={(x, y) => {
-            modifyPoint(nextId, x, y);
+            const diff = {
+              origin: next,
+              new: { x, y },
+            };
+
+            modifyPoints(modifyPoint, points, next, diff);
           }}
         />
       );
@@ -336,6 +341,31 @@ class Drawing extends React.Component {
 }
 
 export default Drawing;
+
+function modifyPoints(modifyPoint, points, current, diff) {
+  const nextId = current.connections && current.connections[1];
+
+  let x;
+  let y;
+
+  if (diff.origin.x > diff.new.x && diff.origin.y < diff.new.y) {
+    x = current.x - Math.abs(diff.origin.x - diff.new.x);
+    y = current.y + Math.abs(diff.origin.y - diff.new.y);
+  } else if (diff.origin.x > diff.new.x && diff.origin.y > diff.new.y) {
+    x = current.x - Math.abs(diff.origin.x - diff.new.x);
+    y = current.y - Math.abs(diff.origin.y - diff.new.y);
+  } else if (diff.origin.x < diff.new.x && diff.origin.y > diff.new.y) {
+    x = current.x + Math.abs(diff.origin.x - diff.new.x);
+    y = current.y - Math.abs(diff.origin.y - diff.new.y);
+  } else if (diff.origin.x < diff.new.x && diff.origin.y < diff.new.y) {
+    x = current.x + Math.abs(diff.origin.x - diff.new.x);
+    y = current.y + Math.abs(diff.origin.y - diff.new.y);
+  }
+
+  modifyPoint(current.id, x, y);
+
+  if (nextId) modifyPoints(modifyPoint, points, points[nextId], diff);
+}
 
 function generateLines(points) {
   const lines = [];
