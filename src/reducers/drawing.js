@@ -86,6 +86,10 @@ export default function (state = initialState, action) {
                 ...point.connections.slice(i + 1),
               ];
             }
+
+            if (point.connections.length === 0) {
+              delete current[point.id];
+            }
           });
         });
 
