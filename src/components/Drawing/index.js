@@ -33,6 +33,10 @@ class Drawing extends React.Component {
 
   componentDidMount() {
     this.setState({ svg: document.getElementsByTagName('svg')[0] });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.keyCode === 27) this.endDraw();
+    }, true);
   }
 
   endDraw() {
