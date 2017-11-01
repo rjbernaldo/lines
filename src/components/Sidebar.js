@@ -28,7 +28,7 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const { numberOfBends, totalLength } = this.props;
+    const { numberOfBends, totalLength, deletePoints, ids } = this.props;
 
     const style = { padding: '0px', margin: '0px', marginBottom: '5px', WebkitUserSelect: 'none' };
     return (
@@ -53,6 +53,15 @@ class Sidebar extends React.Component {
           </GParagraph>
         </GBox>
         <CLineList />
+        <GBox pad="medium">
+          <GParagraph
+            size="small"
+            style={Object.assign({}, style, { fontWeight: '400' })}
+            onClick={() => { deletePoints(ids); }}
+          >
+            Clear Canvas
+          </GParagraph>
+        </GBox>
       </GBox>
     );
   }

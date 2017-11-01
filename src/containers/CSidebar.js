@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import Sidebar from '../components/Sidebar';
 import { setDraw, setSelect } from '../actions/mode';
+import { deletePoints } from '../actions/drawing';
 
 const mapStateToProps = (state) => {
   const points = state.drawing.points;
@@ -29,11 +30,15 @@ const mapStateToProps = (state) => {
 
       return 0;
     }).reduce((a, b) => a + b, 0),
+    ids: Object.keys(points),
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    deletePoints: (ids) => {
+      dispatch(deletePoints(ids));
+    },
   };
 };
 
