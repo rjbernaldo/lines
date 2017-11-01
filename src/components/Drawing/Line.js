@@ -54,7 +54,7 @@ class Line extends React.Component {
 
     const { modifyPoint, current, next, closeModal } = this.props;
 
-    if (isNaN(this.state.input)) {
+    if (isNaN(this.state.tempInput)) {
       alert('Please enter a valid integer.');
     } else {
       const reducedLength = parseInt(this.state.tempInput);
