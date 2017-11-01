@@ -30,16 +30,26 @@ class Line extends React.Component {
   handleRightClick(e) {
     e.preventDefault();
 
-    const { openModal } = this.props;
-
-    this.setState({ tempInput: '' }, () => {
+    const { openModal, current, next } = this.props;
+    const length = calculateLength(current, next);
+    this.setState({ tempInput: length }, () => {
       const form = (
         <GBox pad="medium">
           Enter new length:
           <form onSubmit={this.handleSubmit}>
             <input
               onChange={this.handleChange}
-              ref={(input) => { if (input) setTimeout(() => input.focus(), 0); }}
+              ref={(input) => {
+                if (input) {
+                  setTimeout(() => {
+                    input.focus();
+                    const val = input.value;
+                    input.value = '';
+                    input.value = val;
+                  }, 0); 
+                }
+              }}
+              defaultValue={this.state.tempInput}
             />
           </form>
         </GBox>
