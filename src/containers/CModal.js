@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Modal from '../components/Modal';
-import { submitModal } from '../actions/modal';
+import { closeModal } from '../actions/modal';
 
 const mapStateToProps = (state) => {
   return {
@@ -11,8 +11,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    submitModal: (data) => {
-      dispatch(submitModal(data));
+    closeModal: () => {
+      dispatch(closeModal());
     },
   };
 };

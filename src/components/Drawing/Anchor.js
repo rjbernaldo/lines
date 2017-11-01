@@ -15,6 +15,7 @@ class Anchor extends React.Component {
     this.state = {
       hover: false,
       input: null,
+      tempInput: null,
     };
   }
 
@@ -29,7 +30,7 @@ class Anchor extends React.Component {
   handleRightClick(e) {
     e.preventDefault();
     const { openModal } = this.props;
-    this.setState({ input: '' }, () => {
+    this.setState({ tempInput: '' }, () => {
       const form = (
         <GBox pad="medium">
           Enter new angle:
@@ -51,21 +52,15 @@ class Anchor extends React.Component {
 
     const { modifyPoint, x, y, prev, next, closeModal } = this.props;
 
-    if (isNaN(this.state.input)) {
+    if (isNaN(this.state.tempInput)) {
       alert('Please enter a valid integer.');
     } else {
-      const modifiedAngle = parseInt(this.state.input);
+      const modifiedAngle = parseInt(this.state.tempInput);
 
       this.setState({
-        input: null,
+        tempInput: null,
       }, () => {
-        const a = prev;
-        const b = { x, y };
-        const c = next;
-
-        const coords = calculateNewCoords(a, b, c, modifiedAngle);
-
-        modifyPoint(coords.x, coords.y);
+        modifyPoint(modifiedAngle);
 
         closeModal();
       });
@@ -74,7 +69,7 @@ class Anchor extends React.Component {
 
   handleChange(e) {
     this.setState({
-      input: e.target.value,
+      tempInput: e.target.value,
     });
   }
 
@@ -190,21 +185,6 @@ function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
   }
 
   const newCoords = rotate(b.x, b.y, c.x, c.y, newAngle);
-  // const updatedAngle = calculateDegrees(a, b, newCoords);
-
-  // console.log('baseAngle', baseAngle);
-  // console.log('modifiedAngle', modifiedAngle);
-  // console.log('angle', angle);
-  // console.log('updatedAngle', updatedAngle);
-
-  // const absModifiedAngle = Math.abs(modifiedAngle);
-
-  // if (updatedAngle < absModifiedAngle) {
-  //   return calculateNewCoords(a, b, c, modifiedAngle, (compensatedAngle || modifiedAngle) - 1);
-  // } else if (updatedAngle > absModifiedAngle) {
-  //   return calculateNewCoords(a, b, c, modifiedAngle, (compensatedAngle || modifiedAngle) + 1);
-  // }
-
   return newCoords;
 }
 

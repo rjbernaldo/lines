@@ -5,16 +5,17 @@ import GLayer from 'grommet/components/Layer';
 class Modal extends React.Component {
   constructor(props) {
     super(props);
-
-    this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick() {
-    const { submitModal } = this.props;
+  componentDidMount() {
+    const { closeModal } = this.props;
+    document.addEventListener('keyup', (e) => {
+      if (e.keyCode === 27) closeModal();
+    }, true);
+  }
 
-    submitModal({
-      data: 'test',
-    });
+  componentWillUnmount() {
+    document.removeEventListener('keyup', () => {}, true);
   }
 
   render() {
@@ -24,11 +25,11 @@ class Modal extends React.Component {
           { this.props.form }
         </GLayer>
       );
-    } else {
-      return (
-        <span />
-      );
     }
+
+    return (
+      <span />
+    );
   }
 }
 

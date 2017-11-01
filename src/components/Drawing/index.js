@@ -239,8 +239,9 @@ class Drawing extends React.Component {
         next={next}
         handleMouseDown={handleMouseDown}
         mode={mode}
-        modifyPoint={(x, y) => {
-          modifyPoint(nextId, x, y);
+        modifyPoint={(modifiedAngle) => {
+          modifyAnglePoints(modifyPoint, points, prev, { id, x, y }, next, modifiedAngle);
+          // modifyPoint(nextId, x, y);
         }}
       />
     );
@@ -341,6 +342,85 @@ class Drawing extends React.Component {
 }
 
 export default Drawing;
+
+function modifyAnglePoints(modifyPoint, points, a, b, c, angle) {
+  const coords = calculateNewCoords(a, b, c, angle);
+
+  const lastConnection = b.id;
+  const nextConnection = c.connections.filter(connection => connection !== lastConnection)[0];
+
+  const newA = b;
+  const newC = points[nextConnection];
+  let baseAngle;
+
+  if (nextConnection) {
+    const newB = c;
+    baseAngle = calculateDegrees(
+      newA,
+      newB,
+      newC,
+    );
+  }
+
+  modifyPoint(c.id, coords.x, coords.y);
+
+  if (nextConnection) {
+    const newB = Object.assign({}, c, coords);
+    modifyAnglePoints(modifyPoint,
+      points,
+      newA,
+      newB,
+      newC,
+      baseAngle,
+    );
+  }
+}
+
+function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
+  const baseAngle = calculateDegrees(a, b, c);
+
+  let newAngle = baseAngle - (compensatedAngle || modifiedAngle);
+
+  const foo = (Math.atan2(a.y - b.y, a.x - b.x) * 180 / Math.PI + 180);
+  const bar = (Math.atan2(c.y - b.y, c.x - b.x) * 180 / Math.PI + 180);
+  const result = bar - foo;
+
+  if (result <= 90 && result > 0) {
+  } else if (result <= 180 && result > 90) {
+  } else if (result >= -90 && result < 0) {
+    newAngle = 0 - newAngle;
+  } else {
+    newAngle = 0 - newAngle;
+  }
+
+  const newCoords = rotate(b.x, b.y, c.x, c.y, newAngle);
+  return newCoords;
+}
+
+function calculateDegrees(A, B, C) {
+  if (A && B && C) {
+    const AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
+    const BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
+    const AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
+    const angle = Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
+    const degrees = Math.floor(angle * 180 / Math.PI);
+
+    return degrees;
+  }
+
+  return null;
+}
+
+function rotate(cx, cy, nx, ny, angle) {
+  const radians = (Math.PI / 180) * angle;
+
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
+  const x = (cos * (nx - cx)) + (sin * (ny - cy)) + cx;
+  const y = (cos * (ny - cy)) - (sin * (nx - cx)) + cy;
+
+  return { x, y };
+}
 
 function modifyPoints(modifyPoint, points, current, diff) {
   const nextId = current.connections && current.connections[1];

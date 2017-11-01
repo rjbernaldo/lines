@@ -15,6 +15,7 @@ class Line extends React.Component {
     this.state = {
       hover: false,
       input: null,
+      tempInput: null,
     };
   }
 
@@ -31,7 +32,7 @@ class Line extends React.Component {
 
     const { openModal } = this.props;
 
-    this.setState({ input: '' }, () => {
+    this.setState({ tempInput: '' }, () => {
       const form = (
         <GBox pad="medium">
           Enter new length:
@@ -56,10 +57,10 @@ class Line extends React.Component {
     if (isNaN(this.state.input)) {
       alert('Please enter a valid integer.');
     } else {
-      const reducedLength = parseInt(this.state.input);
+      const reducedLength = parseInt(this.state.tempInput);
 
       this.setState({
-        input: null,
+        tempInput: null,
       }, () => {
         const a = { x: current.x + 180, y: current.y };
         const b = current;
@@ -76,7 +77,7 @@ class Line extends React.Component {
 
   handleChange(e) {
     this.setState({
-      input: e.target.value,
+      tempInput: e.target.value,
     });
   }
 
