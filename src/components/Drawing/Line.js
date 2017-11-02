@@ -28,6 +28,7 @@ class Line extends React.Component {
   }
 
   handleRightClick(e) {
+    console.log('ondblclick');
     e.preventDefault();
 
     const { openModal, current, next } = this.props;
@@ -100,7 +101,7 @@ class Line extends React.Component {
     if (this.state.input === null) {
       text = (
         <text
-          onContextMenu={this.handleRightClick}
+          onDoubleClick={this.handleRightClick}
           style={{
             WebkitUserSelect: 'none',
           }}

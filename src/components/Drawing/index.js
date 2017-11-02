@@ -52,6 +52,8 @@ class Drawing extends React.Component {
       e.target.ondblclick = () => {
         this.endDraw();
       };
+    } else if (e.target.tagName === 'text') {
+      // console.log('click!');
     }
   }
 
@@ -165,6 +167,9 @@ class Drawing extends React.Component {
             alert('Unable to add more connections to anchor.');
           });
         }
+      } else if (e.target.tagName === 'text') {
+        this.endDraw();
+        // console.log('click!');
       } else {
         this.addPoint(
           this.calculateCoords(e),

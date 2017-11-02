@@ -95,7 +95,7 @@ class Anchor extends React.Component {
       if (this.state.input === null) {
         text = (
           <text
-            onContextMenu={this.handleRightClick}
+            onDoubleClick={this.handleRightClick}
             style={{
               WebkitUserSelect: 'none',
             }}
