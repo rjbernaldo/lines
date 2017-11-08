@@ -502,16 +502,16 @@ function modifyPoints(modifyPoint, points, current, diff) {
   const diffX = Math.abs(diff.origin.x - diff.new.x);
   const diffY = Math.abs(diff.origin.y - diff.new.y);
 
-  if (diff.origin.x > diff.new.x && diff.origin.y < diff.new.y) {
+  if (diff.origin.x > diff.new.x && diff.origin.y <= diff.new.y) {
     x = current.x - diffX;
     y = current.y + diffY;
   } else if (diff.origin.x > diff.new.x && diff.origin.y > diff.new.y) {
     x = current.x - diffX;
     y = current.y - diffY;
-  } else if (diff.origin.x < diff.new.x && diff.origin.y > diff.new.y) {
+  } else if (diff.origin.x <= diff.new.x && diff.origin.y > diff.new.y) {
     x = current.x + diffX;
     y = current.y - diffY;
-  } else if (diff.origin.x < diff.new.x && diff.origin.y < diff.new.y) {
+  } else if (diff.origin.x <= diff.new.x && diff.origin.y <= diff.new.y) {
     x = current.x + diffX;
     y = current.y + diffY;
   }

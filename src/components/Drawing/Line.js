@@ -78,7 +78,7 @@ class Line extends React.Component {
         const c = next;
         const angle = calculateDegrees(a, b, c);
         const quadrant = calculateQuadrant(b, c);
-        const coords = calculateNewCoordinates(b, angle, reducedLength, quadrant);
+        const coords = calculateNewCoordinates({ current, next }, angle, reducedLength, quadrant);
 
         modifyPoint(coords.x, coords.y);
         closeModal();
@@ -181,22 +181,22 @@ function calculateMidPoint(c, n) {
 }
 
 function calculateNewCoordinates(origin, angle, length, quadrant, modifiedLength) {
+  const { current, next } = origin;
   let x;
   let y;
-
   const finalLength = modifiedLength || length;
 
   switch (quadrant) {
     case 1:
     case 2: {
-      x = origin.x + (Math.cos((angle * Math.PI)/180) * finalLength);
-      y = origin.y - (Math.sin((angle * Math.PI)/180) * finalLength);
+      x = current.x + (Math.cos((angle * Math.PI)/180) * finalLength);
+      y = current.y - (Math.sin((angle * Math.PI)/180) * finalLength);
       break;
     }
     case 3:
     case 4: {
-      x = origin.x + (Math.cos((angle * Math.PI)/180) * finalLength);
-      y = origin.y + (Math.sin((angle * Math.PI)/180) * finalLength);
+      x = current.x + (Math.cos((angle * Math.PI)/180) * finalLength);
+      y = current.y + (Math.sin((angle * Math.PI)/180) * finalLength);
       break;
     }
     default: {
@@ -205,8 +205,17 @@ function calculateNewCoordinates(origin, angle, length, quadrant, modifiedLength
     }
   }
 
+  if (current.x === next.x) x = current.x;
+  if (current.y === next.y) y = current.y;
+
   const result = { x, y };
-  const newLength = calculateLength(origin, result);
+  const newLength = calculateLength(current, result);
+
+  console.log('current', current.y);
+  console.log('next', next.y);
+  console.log('result', result.y);
+  console.log('newLength', newLength);
+  console.log('length', length);
 
   if (newLength < length) {
     const l = finalLength + 0.01;
@@ -232,10 +241,10 @@ function calculateDegrees(A, B, C) {
 }
 
 function calculateQuadrant(c, n) {
-  if (c.x < n.x && c.y > n.y) return 1;
+  if (c.x <= n.x && c.y > n.y) return 1;
   if (c.x > n.x && c.y > n.y) return 2;
-  if (c.x > n.x && c.y < n.y) return 3;
-  if (c.x < n.x && c.y < n.y) return 4;
+  if (c.x > n.x && c.y <= n.y) return 3;
+  if (c.x <= n.x && c.y <= n.y) return 4;
 
   return 0;
 }
