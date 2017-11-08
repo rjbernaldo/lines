@@ -16,6 +16,7 @@ class Anchor extends React.Component {
       hover: false,
       input: null,
       tempInput: null,
+      degrees: null,
     };
   }
 
@@ -85,10 +86,9 @@ class Anchor extends React.Component {
   }
 
   render() {
-    const { x, y, handleMouseDown, deleteAnchor, prev, next, mode, openModal } = this.props;
+    const { x, y, handleMouseDown, deleteAnchor, prev, next, mode, openModal, degrees } = this.props;
 
-    const degrees = calculateDegrees(prev, { x, y }, next);
-
+    // const degrees = calculateDegrees(prev, { x, y }, next);
     let text;
 
     if (degrees) {
@@ -109,27 +109,6 @@ class Anchor extends React.Component {
             {degrees}º
           </text>
         );
-      } else {
-        //        text = (
-        //          <foreignObject
-        //            x={x - 25}
-        //            y={y - 25}
-        //            fontFamily="sans-serif"
-        //            fontSize="12px"
-        //            stroke="none"
-        //            fill="black"
-        //          >
-        //            <form
-        //              onSubmit={this.handleSubmit}
-        //            >
-        //              <input
-        //                onChange={this.handleChange}
-        //                ref={(input) => { if (input) input.focus(); }}
-        //                style={{ padding: '0px' }}
-        //              />
-        //            </form>
-        //          </foreignObject>
-        // );
       }
     }
 

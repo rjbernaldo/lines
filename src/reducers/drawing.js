@@ -1,6 +1,6 @@
 import update from 'react-addons-update';
 
-import { ADD_POINT, MODIFY_POINT, DELETE_POINTS } from '../actions/drawing';
+import { ADD_POINT, MODIFY_POINT, MODIFY_DEGREES, DELETE_POINTS } from '../actions/drawing';
 
 const initialState = {
   points: {},
@@ -57,6 +57,19 @@ export default function (state = initialState, action) {
           }),
         });
       }
+
+      return newState;
+    }
+    case MODIFY_DEGREES: {
+      const current = Object.assign({}, state.points);
+
+      const newState = Object.assign({}, {
+        points: update(current, {
+          [action.id]: {
+            degrees: { $set: action.degree },
+          },
+        }),
+      });
 
       return newState;
     }

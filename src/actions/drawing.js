@@ -1,5 +1,6 @@
 export const ADD_POINT = 'ADD_POINT';
 export const MODIFY_POINT = 'MODIFY_POINT';
+export const MODIFY_DEGREES = 'MODIFY_DEGREES';
 export const DELETE_POINTS = 'DELETE_POINTS';
 
 export function addPoint(id, x, y, previousId) {
@@ -19,6 +20,14 @@ export function modifyPoint(id, x, y, nextId) {
     x,
     y,
     nextId,
+  };
+}
+
+export function modifyDegrees(id, degrees) {
+  return {
+    type: MODIFY_DEGREES,
+    id,
+    degrees,
   };
 }
 

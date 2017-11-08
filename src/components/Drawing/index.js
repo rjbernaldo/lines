@@ -244,7 +244,7 @@ class Drawing extends React.Component {
   }
 
   renderAnchors(k, i) {
-    const { deletePoints, mode, points, modifyPoint, openModal, closeModal } = this.props;
+    const { deletePoints, mode, points, modifyPoint, modifyDegrees, openModal, closeModal } = this.props;
     const { id, x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(id);
     const nextId = connections[1];
@@ -266,6 +266,15 @@ class Drawing extends React.Component {
       if (mode === 'SELECT') deletePoints([id]);
     };
 
+    let degrees = points[id].degrees;
+
+    if (mode === 'DRAW' || this.state.dragging) {
+      const d = calculateDegrees(prev, { x, y }, nnext);
+      points[id].degrees = d;
+      degrees = points[id].degrees;
+    }
+
+console.log(mode, degrees);
     return (
       <Anchor
         openModal={openModal}
@@ -274,6 +283,7 @@ class Drawing extends React.Component {
         key={i}
         x={x}
         y={y}
+        degrees={degrees}
         prev={prev}
         next={nnext}
         handleMouseDown={handleMouseDown}
@@ -286,7 +296,10 @@ class Drawing extends React.Component {
 
               let angle = point.angle;
 
-              if (point.id === id) angle = modifiedAngle;
+              if (point.id === id) {
+                angle = modifiedAngle;
+                points[id].degrees = angle;
+              }
 
               const last = set[point.lastId] || points[point.lastId];
               let next = set[point.nextId] || points[point.nextId];

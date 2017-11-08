@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Drawing from '../components/Drawing/index';
-import { addPoint, modifyPoint, deletePoints } from '../actions/drawing';
+import { addPoint, modifyPoint, modifyDegrees, deletePoints } from '../actions/drawing';
 import { setDraw, setSelect } from '../actions/mode';
 import { openModal, closeModal } from '../actions/modal';
 
@@ -18,6 +18,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     modifyPoint: (id, x, y, next) => {
       dispatch(modifyPoint(id, x, y, next));
+    },
+    modifyDegrees: (id, degrees) => {
+      dispatch(modifyDegrees(id, degrees));
     },
     deletePoints: (ids) => {
       dispatch(deletePoints(ids));
