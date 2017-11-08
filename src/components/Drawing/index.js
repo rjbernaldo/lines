@@ -35,6 +35,14 @@ class Drawing extends React.Component {
     this.setState({ svg: document.getElementsByTagName('svg')[0] });
 
     document.addEventListener('keyup', (e) => {
+      const { origin } = this.state;
+      const { points, deletePoints } = this.props;
+
+      const last = points[origin.id];
+      if (last && last.connections.length === 0) {
+        deletePoints([last.id]);
+      }
+
       if (e.keyCode === 27) this.endDraw();
     }, true);
   }
@@ -223,7 +231,7 @@ class Drawing extends React.Component {
       ? points[connections[0]]
       : null;
 
-    const next = connections[1]
+    const nnext = connections[1]
       ? points[connections[1]]
       : this.state.origin.id === id
         ? this.state.mouse
@@ -245,11 +253,40 @@ class Drawing extends React.Component {
         x={x}
         y={y}
         prev={prev}
-        next={next}
+        next={nnext}
         handleMouseDown={handleMouseDown}
         mode={mode}
         modifyPoint={(modifiedAngle) => {
-          modifyAnglePoints(modifyPoint, points, prev, { id, x, y }, next, modifiedAngle);
+          traversePoints(points, {
+          }, prev, { id, x, y }, nnext, (set) => {
+            Object.keys(set).forEach((pointId) => {
+              const point = set[pointId];
+
+              let angle = point.angle;
+
+              if (point.id === id) angle = modifiedAngle;
+
+              const last = set[point.lastId] || points[point.lastId];
+              let next = set[point.nextId] || points[point.nextId];
+
+              const coords = calculateNewCoords(last, point, next, angle);
+
+              if (set[point.nextId]) {
+                set[point.nextId].x = coords.x;
+                set[point.nextId].y = coords.y;
+              } else {
+                set[point.nextId] = Object.assign({}, points[point.nextId], coords);
+                next = set[point.nextId];
+              }
+            });
+
+            Object.keys(set).forEach((pointId) => {
+              const point = set[pointId];
+
+              modifyPoint(point.id, point.x, point.y);
+            });
+          });
+          // modifyAnglePoints(modifyPoint, points, prev, { id, x, y }, next, modifiedAngle);
           // modifyPoint(nextId, x, y);
         }}
       />
@@ -350,40 +387,56 @@ class Drawing extends React.Component {
   }
 }
 
-export default Drawing;
+function traversePoints(points, set, a, b, c, cb) {
+  const current = Object.assign({}, b, {
+    lastId: a.id,
+    nextId: c.id,
+    angle: calculateDegrees(a, b, c),
+  });
 
-function modifyAnglePoints(modifyPoint, points, a, b, c, angle) {
-  const coords = calculateNewCoords(a, b, c, angle);
+  set[b.id] = current;
 
-  const lastConnection = b.id;
-  const nextConnection = c.connections.filter(connection => connection !== lastConnection)[0];
-
-  const newA = b;
-  const newC = points[nextConnection];
-  let baseAngle;
-
-  if (nextConnection) {
-    const newB = c;
-    baseAngle = calculateDegrees(
-      newA,
-      newB,
-      newC,
-    );
-  }
-
-  modifyPoint(c.id, coords.x, coords.y);
-
-  if (nextConnection) {
-    const newB = Object.assign({}, c, coords);
-    modifyAnglePoints(modifyPoint,
-      points,
-      newA,
-      newB,
-      newC,
-      baseAngle,
-    );
+  const futureId = c.connections.filter(connection => connection !== b.id)[0];
+  if (futureId) {
+    traversePoints(points, set, b, c, points[futureId], cb);
+  } else {
+    cb(set);
   }
 }
+
+export default Drawing;
+
+// function modifyAnglePoints(modifyPoint, points, a, b, c, angle) {
+//   console.log('2, currentAngle', angle);
+//   const coords = calculateNewCoords(a, b, c, angle);
+
+//   const lastConnection = b.id;
+//   const nextConnection = c.connections.filter(connection => connection !== lastConnection)[0];
+
+//   if (nextConnection) {
+//     const nextA = Object.assign({}, b);
+//     const nextB = Object.assign({}, c, coords);
+//     const nextC = points[nextConnection];
+
+//     const nextAngle = calculateDegrees(
+//       nextA,
+//       c,
+//       nextC,
+//     );
+
+//     console.log('0, angle', angle);
+//     console.log('1, nextAngle', nextAngle);
+//     modifyAnglePoints(modifyPoint,
+//       points,
+//       nextA,
+//       nextB,
+//       nextC,
+//       nextAngle,
+//     );
+//   }
+
+//   modifyPoint(c.id, coords.x, coords.y);
+// }
 
 function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
   const baseAngle = calculateDegrees(a, b, c);
@@ -437,21 +490,28 @@ function modifyPoints(modifyPoint, points, current, diff) {
   let x;
   let y;
 
+  const diffX = Math.abs(diff.origin.x - diff.new.x);
+  const diffY = Math.abs(diff.origin.y - diff.new.y);
+
   if (diff.origin.x > diff.new.x && diff.origin.y < diff.new.y) {
-    x = current.x - Math.abs(diff.origin.x - diff.new.x);
-    y = current.y + Math.abs(diff.origin.y - diff.new.y);
+    x = current.x - diffX;
+    y = current.y + diffY;
   } else if (diff.origin.x > diff.new.x && diff.origin.y > diff.new.y) {
-    x = current.x - Math.abs(diff.origin.x - diff.new.x);
-    y = current.y - Math.abs(diff.origin.y - diff.new.y);
+    x = current.x - diffX;
+    y = current.y - diffY;
   } else if (diff.origin.x < diff.new.x && diff.origin.y > diff.new.y) {
-    x = current.x + Math.abs(diff.origin.x - diff.new.x);
-    y = current.y - Math.abs(diff.origin.y - diff.new.y);
+    x = current.x + diffX;
+    y = current.y - diffY;
   } else if (diff.origin.x < diff.new.x && diff.origin.y < diff.new.y) {
-    x = current.x + Math.abs(diff.origin.x - diff.new.x);
-    y = current.y + Math.abs(diff.origin.y - diff.new.y);
+    x = current.x + diffX;
+    y = current.y + diffY;
   }
 
-  modifyPoint(current.id, x, y);
+  modifyPoint(
+    current.id,
+    x,
+    y,
+  );
 
   if (nextId) modifyPoints(modifyPoint, points, points[nextId], diff);
 }
