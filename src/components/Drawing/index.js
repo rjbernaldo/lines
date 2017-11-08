@@ -198,7 +198,20 @@ class Drawing extends React.Component {
 
     if (selectMode) {
       if (this.state.dragging) {
-        modifyPoint(this.state.origin.id, x, y);
+        let newX = x;
+        let newY = y;
+
+        const last = points[points[this.state.origin.id].connections[0]];
+
+        if (last) {
+          const diffX = Math.abs(x - last.x);
+          const diffY = Math.abs(y - last.y);
+
+          if (diffX < 20) newX = last.x;
+          if (diffY < 20) newY = last.y;
+        }
+
+        modifyPoint(this.state.origin.id, newX, newY);
       } else if (this.state.touched) {
         this.setState({ dragging: true });
       } else if (this.state.lineDragging) {
