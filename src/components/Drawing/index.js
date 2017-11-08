@@ -140,7 +140,8 @@ class Drawing extends React.Component {
       switch (e.target.tagName) {
         case 'svg': {
           this.addPoint(
-            this.calculateCoords(e),
+            this.state.mouse,
+            // this.calculateCoords(e),
             this.state.origin.id,
           );
           break;
@@ -217,7 +218,15 @@ class Drawing extends React.Component {
       }
     } else {
       const mouse = { x, y };
-      this.setState({ mouse });
+      const diffX = Math.abs(mouse.x - this.state.origin.x);
+      const diffY = Math.abs(mouse.y - this.state.origin.y);
+
+      if (diffX < 20) mouse.x = this.state.origin.x;
+      if (diffY < 20) mouse.y = this.state.origin.y;
+
+      this.setState({
+        mouse,
+      });
     }
   }
 
