@@ -86,12 +86,12 @@ class Anchor extends React.Component {
   }
 
   render() {
-    const { x, y, handleMouseDown, deleteAnchor, prev, next, mode, openModal, degrees } = this.props;
+    const { id, x, y, handleMouseDown, deleteAnchor, prev, next, mode, openModal, degrees } = this.props;
 
     // const degrees = calculateDegrees(prev, { x, y }, next);
     let text;
 
-    if (degrees) {
+    // if (degrees) {
       if (this.state.input === null) {
         text = (
           <text
@@ -106,11 +106,11 @@ class Anchor extends React.Component {
             stroke="none"
             fill="black"
           >
-            {degrees}º
+            {`${id}: ${degrees}`}º
           </text>
         );
       }
-    }
+    // }
 
     const stroke = this.state.hover && mode === 'SELECT'
         ? 'blue'

@@ -35,19 +35,20 @@ class Drawing extends React.Component {
     this.setState({ svg: document.getElementsByTagName('svg')[0] });
 
     document.addEventListener('keyup', (e) => {
-      const { origin } = this.state;
-      const { points, deletePoints } = this.props;
-
-      const last = points[origin.id];
-      if (last && last.connections.length === 0) {
-        deletePoints([last.id]);
-      }
-
       if (e.keyCode === 27) this.endDraw();
     }, true);
   }
 
   endDraw() {
+    const { origin } = this.state;
+    const { points, deletePoints } = this.props;
+
+    const last = points[origin.id];
+    if (last && last.connections.length === 0) {
+      last.degrees = null;
+      deletePoints([last.id]);
+    }
+
     const { setSelect } = this.props;
     this.setState({ origin: {}, mouse: {}, touched: false, dragging: false }, () => {
       setSelect();
@@ -165,7 +166,7 @@ class Drawing extends React.Component {
     } else if (this.state.lineDragging) {
       this.setState({ lineDragging: false, line: null });
     } else if (!this.state.dragging) {
-      setDraw();
+      if (e.target.tagName !== 'text') setDraw();
 
       if (e.target.tagName === 'circle') {
         const c = points[this.state.origin.id];
@@ -244,7 +245,8 @@ class Drawing extends React.Component {
   }
 
   renderAnchors(k, i) {
-    const { deletePoints, mode, points, modifyPoint, modifyDegrees, openModal, closeModal } = this.props;
+    const { deletePoints, mode, modifyPoint, modifyDegrees, openModal, closeModal } = this.props;
+    let points = this.props.points;
     const { id, x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(id);
     const nextId = connections[1];
@@ -274,13 +276,13 @@ class Drawing extends React.Component {
       degrees = points[id].degrees;
     }
 
-console.log(mode, degrees);
     return (
       <Anchor
         openModal={openModal}
         closeModal={closeModal}
         deleteAnchor={deleteAnchor}
         key={i}
+        id={id}
         x={x}
         y={y}
         degrees={degrees}
@@ -291,38 +293,88 @@ console.log(mode, degrees);
         modifyPoint={(modifiedAngle) => {
           traversePoints(points, {
           }, prev, { id, x, y }, nnext, (set) => {
-            Object.keys(set).forEach((pointId) => {
-              const point = set[pointId];
+            const setKeys = Object.keys(set);
 
-              let angle = point.angle;
+            let pointId = setKeys[0];
+            let point = set[pointId];
+            let angle = modifiedAngle;
+            let last = points[point.lastId];
+            let next = points[point.nextId];
 
-              if (point.id === id) {
-                angle = modifiedAngle;
-                points[id].degrees = angle;
-              }
+            if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
 
-              const last = set[point.lastId] || points[point.lastId];
-              let next = set[point.nextId] || points[point.nextId];
+            let coords = calculateNewCoords(last, point, next, angle);
 
-              const coords = calculateNewCoords(last, point, next, angle);
+            const diff = {
+              origin: {
+                x: set[point.nextId].x,
+                y: set[point.nextId].y,
+              },
+              new: coords,
+            };
 
-              if (set[point.nextId]) {
-                set[point.nextId].x = coords.x;
-                set[point.nextId].y = coords.y;
-              } else {
-                set[point.nextId] = Object.assign({}, points[point.nextId], coords);
-                next = set[point.nextId];
-              }
-            });
+            set[id].degrees = angle;
+            set[point.nextId].x = coords.x;
+            set[point.nextId].y = coords.y;
+            points[id].degrees = angle;
+            points[point.nextId].x = coords.x;
+            points[point.nextId].y = coords.y;
 
-            Object.keys(set).forEach((pointId) => {
-              const point = set[pointId];
+            modifyPoint(point.nextId, coords.x, coords.y);
 
-              modifyPoint(point.id, point.x, point.y);
-            });
+            const current = points[point.nextId];
+            const nId = current.connections && current.connections[1];
+
+            if (nId) modifyPoints(modifyPoint, points, points[nId], diff);
+
+            for (let i = 1; i < setKeys.length; i++) {
+              pointId = setKeys[i];
+              point = set[pointId];
+              angle = point.degrees;
+              last = points[point.lastId];
+              next = points[point.nextId];
+
+              coords = calculateNewCoords(last, point, next, angle);
+
+              if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
+              set[point.nextId].x = coords.x;
+              set[point.nextId].y = coords.y;
+              points[point.nextId].x = coords.x;
+              points[point.nextId].y = coords.y;
+
+              // modifyPoint(point.nextId, coords.x, coords.y);
+            }
+
+            // Object.keys(set).forEach((pointId) => {
+            //   points = this.props.points;
+            //   const point = set[pointId];
+            //   const ppoint = points[pointId];
+
+            //   let angle = point.angle;
+
+            //   if (point.id === id) {
+            //     angle = modifiedAngle;
+            //     points[id].degrees = angle;
+            //   }
+            //   const last = points[point.lastId];
+            //   let next = points[point.nextId];
+
+            //   const coords = calculateNewCoords(last, ppoint, next, angle);
+
+            //   points[point.nextId].x = coords.x;
+            //   points[point.nextId].y = coords.y;
+
+            //   if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
+
+            //   const n = points[point.nextId];
+
+            //   console.log('---');
+            //   console.log(`${last.id}:l`, last.x, last.y);
+            //   console.log(`${ppoint.id}:c`, ppoint.x, ppoint.y);
+            //   console.log(`${n.id}:n`, n.x, n.y)
+            //   console.log('angle', angle);
+            // });
           });
-          // modifyAnglePoints(modifyPoint, points, prev, { id, x, y }, next, modifiedAngle);
-          // modifyPoint(nextId, x, y);
         }}
       />
     );
@@ -441,38 +493,6 @@ function traversePoints(points, set, a, b, c, cb) {
 
 export default Drawing;
 
-// function modifyAnglePoints(modifyPoint, points, a, b, c, angle) {
-//   console.log('2, currentAngle', angle);
-//   const coords = calculateNewCoords(a, b, c, angle);
-
-//   const lastConnection = b.id;
-//   const nextConnection = c.connections.filter(connection => connection !== lastConnection)[0];
-
-//   if (nextConnection) {
-//     const nextA = Object.assign({}, b);
-//     const nextB = Object.assign({}, c, coords);
-//     const nextC = points[nextConnection];
-
-//     const nextAngle = calculateDegrees(
-//       nextA,
-//       c,
-//       nextC,
-//     );
-
-//     console.log('0, angle', angle);
-//     console.log('1, nextAngle', nextAngle);
-//     modifyAnglePoints(modifyPoint,
-//       points,
-//       nextA,
-//       nextB,
-//       nextC,
-//       nextAngle,
-//     );
-//   }
-
-//   modifyPoint(c.id, coords.x, coords.y);
-// }
-
 function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
   const baseAngle = calculateDegrees(a, b, c);
 
@@ -491,6 +511,7 @@ function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
   }
 
   const newCoords = rotate(b.x, b.y, c.x, c.y, newAngle);
+
   return newCoords;
 }
 
@@ -510,11 +531,10 @@ function calculateDegrees(A, B, C) {
 
 function rotate(cx, cy, nx, ny, angle) {
   const radians = (Math.PI / 180) * angle;
-
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);
-  const x = (cos * (nx - cx)) + (sin * (ny - cy)) + cx;
-  const y = (cos * (ny - cy)) - (sin * (nx - cx)) + cy;
+  let x = (cos * (nx - cx)) + (sin * (ny - cy)) + cx;
+  let y = (cos * (ny - cy)) - (sin * (nx - cx)) + cy;
 
   return { x, y };
 }
@@ -574,4 +594,11 @@ function generateLines(points) {
   });
 
   return lines;
+}
+
+function calculateLength(c, n) {
+  const a = c.x - n.x;
+  const b = c.y - n.y;
+
+  return parseInt(Math.sqrt(a*a + b*b));
 }
