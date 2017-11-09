@@ -325,25 +325,27 @@ class Drawing extends React.Component {
             const current = points[point.nextId];
             const nId = current.connections && current.connections[1];
 
-            if (nId) modifyPoints(modifyPoint, points, points[nId], diff);
+            if (!set[nId]) set[nId] = points[nId];
 
-            for (let i = 1; i < setKeys.length; i++) {
-              pointId = setKeys[i];
-              point = set[pointId];
-              angle = point.degrees;
-              last = points[point.lastId];
-              next = points[point.nextId];
+            if (nId) modifyPoints(modifyPoint, points, set[nId], diff, set);
 
-              coords = calculateNewCoords(last, point, next, angle);
+          //   for (let i = 1; i < setKeys.length; i++) {
+          //     pointId = setKeys[i];
+          //     point = set[pointId];
+          //     angle = point.degrees;
+          //     last = points[point.lastId];
+          //     next = points[point.nextId];
 
-              if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
-              set[point.nextId].x = coords.x;
-              set[point.nextId].y = coords.y;
-              points[point.nextId].x = coords.x;
-              points[point.nextId].y = coords.y;
+          //     coords = calculateNewCoords(last, point, next, angle);
 
-              modifyPoint(point.nextId, coords.x, coords.y);
-            }
+          //     if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
+          //     set[point.nextId].x = coords.x;
+          //     set[point.nextId].y = coords.y;
+          //     points[point.nextId].x = coords.x;
+          //     points[point.nextId].y = coords.y;
+
+          //     modifyPoint(point.nextId, coords.x, coords.y);
+          //   }
           });
         }}
       />
@@ -509,7 +511,7 @@ function rotate(cx, cy, nx, ny, angle) {
   return { x, y };
 }
 
-function modifyPoints(modifyPoint, points, current, diff) {
+function modifyPoints(modifyPoint, points, current, diff, set = {}) {
   const nextId = current.connections && current.connections[1];
 
   let x;
@@ -532,8 +534,9 @@ function modifyPoints(modifyPoint, points, current, diff) {
     y = current.y + diffY;
   }
 
-  points[current.id].x = x;
-  points[current.id].y = y;
+  if (!set[current.id]) set[current.id] = Object.assign({} ,points[current.id]);
+  set[current.id].x = x;
+  set[current.id].y = y;
 
   modifyPoint(
     current.id,
@@ -541,7 +544,7 @@ function modifyPoints(modifyPoint, points, current, diff) {
     y,
   );
 
-  if (nextId) modifyPoints(modifyPoint, points, points[nextId], diff);
+  if (nextId) modifyPoints(modifyPoint, points, points[nextId], diff, set);
 }
 
 function generateLines(points) {

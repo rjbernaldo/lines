@@ -211,12 +211,6 @@ function calculateNewCoordinates(origin, angle, length, quadrant, modifiedLength
   const result = { x, y };
   const newLength = calculateLength(current, result);
 
-  console.log('current', current.y);
-  console.log('next', next.y);
-  console.log('result', result.y);
-  console.log('newLength', newLength);
-  console.log('length', length);
-
   if (newLength < length) {
     const l = finalLength + 0.01;
     return calculateNewCoordinates(origin, angle, length, quadrant, l);
