@@ -342,38 +342,8 @@ class Drawing extends React.Component {
               points[point.nextId].x = coords.x;
               points[point.nextId].y = coords.y;
 
-              // modifyPoint(point.nextId, coords.x, coords.y);
+              modifyPoint(point.nextId, coords.x, coords.y);
             }
-
-            // Object.keys(set).forEach((pointId) => {
-            //   points = this.props.points;
-            //   const point = set[pointId];
-            //   const ppoint = points[pointId];
-
-            //   let angle = point.angle;
-
-            //   if (point.id === id) {
-            //     angle = modifiedAngle;
-            //     points[id].degrees = angle;
-            //   }
-            //   const last = points[point.lastId];
-            //   let next = points[point.nextId];
-
-            //   const coords = calculateNewCoords(last, ppoint, next, angle);
-
-            //   points[point.nextId].x = coords.x;
-            //   points[point.nextId].y = coords.y;
-
-            //   if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
-
-            //   const n = points[point.nextId];
-
-            //   console.log('---');
-            //   console.log(`${last.id}:l`, last.x, last.y);
-            //   console.log(`${ppoint.id}:c`, ppoint.x, ppoint.y);
-            //   console.log(`${n.id}:n`, n.x, n.y)
-            //   console.log('angle', angle);
-            // });
           });
         }}
       />
@@ -561,6 +531,9 @@ function modifyPoints(modifyPoint, points, current, diff) {
     x = current.x + diffX;
     y = current.y + diffY;
   }
+
+  points[current.id].x = x;
+  points[current.id].y = y;
 
   modifyPoint(
     current.id,
