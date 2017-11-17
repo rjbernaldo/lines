@@ -293,7 +293,7 @@ class Drawing extends React.Component {
         modifyPoint={(modifiedAngle) => {
           traversePoints(points, {
           }, prev, { id, x, y }, nnext, (set) => {
-            const setKeys = Object.keys(set);
+            let setKeys = Object.keys(set);
 
             let pointId = setKeys[0];
             let point = set[pointId];
@@ -316,9 +316,6 @@ class Drawing extends React.Component {
             set[id].degrees = angle;
             set[point.nextId].x = coords.x;
             set[point.nextId].y = coords.y;
-            points[id].degrees = angle;
-            points[point.nextId].x = coords.x;
-            points[point.nextId].y = coords.y;
 
             modifyPoint(point.nextId, coords.x, coords.y);
 
@@ -329,25 +326,24 @@ class Drawing extends React.Component {
 
             if (nId) modifyPoints(modifyPoint, points, set[nId], diff, set);
 
-          //   for (let i = 1; i < setKeys.length; i++) {
-          //     pointId = setKeys[i];
-          //     point = set[pointId];
-          //     angle = point.degrees;
-          //     last = points[point.lastId];
-          //     next = points[point.nextId];
+            setKeys = Object.keys(set);
+            // for (let i = 1; i < setKeys.length; i++) {
+            //   pointId = setKeys[i];
+            //   point = set[pointId];
+            //   angle = point.degrees;
+            //   last = points[point.lastId];
+            //   next = points[point.nextId];
 
-          //     coords = calculateNewCoords(last, point, next, angle);
+            //   coords = calculateNewCoords(last, point, next, angle);
 
-          //     if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
-          //     set[point.nextId].x = coords.x;
-          //     set[point.nextId].y = coords.y;
-          //     points[point.nextId].x = coords.x;
-          //     points[point.nextId].y = coords.y;
+            //   if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
+            //   set[point.nextId].x = coords.x;
+            //   set[point.nextId].y = coords.y;
 
-          //     modifyPoint(point.nextId, coords.x, coords.y);
-          //   }
-          setDraw();
-          this.endDraw();
+            //   modifyPoint(point.nextId, coords.x, coords.y);
+            // }
+            setDraw();
+            this.endDraw();
           });
         }}
       />
