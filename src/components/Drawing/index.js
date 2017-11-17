@@ -313,7 +313,7 @@ class Drawing extends React.Component {
               new: coords,
             };
 
-            set[id].degrees = angle;
+            set[id].angle = angle;
             set[point.nextId].x = coords.x;
             set[point.nextId].y = coords.y;
 
@@ -322,26 +322,34 @@ class Drawing extends React.Component {
             const current = points[point.nextId];
             const nId = current.connections && current.connections[1];
 
-            if (!set[nId]) set[nId] = points[nId];
+            if (nId && !set[nId]) set[nId] = points[nId];
 
             if (nId) modifyPoints(modifyPoint, points, set[nId], diff, set);
 
             setKeys = Object.keys(set);
-            // for (let i = 1; i < setKeys.length; i++) {
-            //   pointId = setKeys[i];
-            //   point = set[pointId];
-            //   angle = point.degrees;
-            //   last = points[point.lastId];
-            //   next = points[point.nextId];
+            for (let i = 1; i < setKeys.length; i++) {
+              let pointId = setKeys[i];
+              let point = set[pointId];
+              let angle = point.angle;
+              let last = set[point.lastId] || points[point.lastId];
+              let next = set[point.nextId] || points[point.nextId];
 
-            //   coords = calculateNewCoords(last, point, next, angle);
+              if (point.nextId) {
+                let coords = calculateNewCoords(last, point, next, angle);
 
-            //   if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
-            //   set[point.nextId].x = coords.x;
-            //   set[point.nextId].y = coords.y;
+                if (!set[point.nextId]) set[point.nextId] = points[point.nextId];
+                set[point.nextId].x = coords.x;
+                set[point.nextId].y = coords.y;
+              }
+            }
 
-            //   modifyPoint(point.nextId, coords.x, coords.y);
-            // }
+            setKeys = Object.keys(set);
+            for (let i = 1; i < setKeys.length; i++) {
+              let pointId = setKeys[i];
+              let point = set[pointId];
+              modifyPoint(point.id, point.x, point.y);
+            }
+
             setDraw();
             this.endDraw();
           });
@@ -447,14 +455,14 @@ class Drawing extends React.Component {
 function traversePoints(points, set, a, b, c, cb) {
   const current = Object.assign({}, b, {
     lastId: a.id,
-    nextId: c.id,
-    angle: calculateDegrees(a, b, c),
+    degrees: calculateDegrees(a, b, c),
   });
 
   set[b.id] = current;
 
-  const futureId = c.connections.filter(connection => connection !== b.id)[0];
-  if (futureId) {
+  if (c) {
+    set[b.id].nextId = c.id;
+    const futureId = c.connections.filter(connection => connection !== b.id)[0];
     traversePoints(points, set, b, c, points[futureId], cb);
   } else {
     cb(set);
