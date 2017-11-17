@@ -327,7 +327,7 @@ class Drawing extends React.Component {
 
             if (!set[nId]) set[nId] = points[nId];
 
-            // if (nId) modifyPoints(modifyPoint, points, set[nId], diff, set);
+            if (nId) modifyPoints(modifyPoint, points, set[nId], diff, set);
 
           //   for (let i = 1; i < setKeys.length; i++) {
           //     pointId = setKeys[i];
