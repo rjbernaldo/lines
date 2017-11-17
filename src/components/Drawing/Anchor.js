@@ -165,7 +165,7 @@ function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
   const foo = (Math.atan2(a.y - b.y, a.x - b.x) * 180 / Math.PI + 180);
   const bar = (Math.atan2(c.y - b.y, c.x - b.x) * 180 / Math.PI + 180);
   const result = bar - foo;
-
+console.log(result);
   if (result <= 90 && result > 0) {
   } else if (result <= 180 && result > 90) {
   } else if (result >= -90 && result < 0) {

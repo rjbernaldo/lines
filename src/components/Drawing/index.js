@@ -327,7 +327,7 @@ class Drawing extends React.Component {
 
             if (!set[nId]) set[nId] = points[nId];
 
-            if (nId) modifyPoints(modifyPoint, points, set[nId], diff, set);
+            // if (nId) modifyPoints(modifyPoint, points, set[nId], diff, set);
 
           //   for (let i = 1; i < setKeys.length; i++) {
           //     pointId = setKeys[i];
@@ -480,6 +480,9 @@ function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
   } else if (result <= 180 && result > 90) {
   } else if (result >= -90 && result < 0) {
     newAngle = 0 - newAngle;
+  } else if (result >= -180 && result < -90) {
+    newAngle = 0 - newAngle;
+  } else if (result >= -270 && result < -180) {
   } else {
     newAngle = 0 - newAngle;
   }
