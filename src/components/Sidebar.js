@@ -31,12 +31,18 @@ class Sidebar extends React.Component {
     const { numberOfBends, totalLength, deletePoints, ids } = this.props;
 
     const style = { padding: '0px', margin: '0px', marginBottom: '5px', WebkitUserSelect: 'none' };
+
+    const modifier = calculateModifier(null, numberOfBends, totalLength);
+    const price = ((totalLength / 1000) * modifier);
+
     return (
       <GBox style={{ width: '300px' }}>
         <GBox pad="medium">
           <GHeading tag="h3" style={{ WebkitUserSelect: 'none' }}>Details</GHeading>
           <GParagraph size="small" style={style}>Number of Bends: { numberOfBends }</GParagraph>
-          <GParagraph size="small" style={style}>Total Length: { totalLength }</GParagraph>
+          <GParagraph size="small" style={style}>Total Length: { totalLength } mm</GParagraph>
+          <GParagraph size="small" style={style}>Price per metre: ${ modifier.toFixed(2) }</GParagraph>
+          <GParagraph size="small" style={style}>Total Price: ${ price.toFixed(2) }</GParagraph>
           <GParagraph size="small" style={style}>
             Type:
             <select name="type" onChange={this.handleSelect}>
@@ -69,7 +75,7 @@ class Sidebar extends React.Component {
 
 export default Sidebar;
 
-function calculatePrice(girth = 1, bends = 1, length) {
+function calculateModifier(girth = 1, bends = 1, length) {
   const priceMatrix = {
     100: [5.28, 5.59, 5.91, 6.22, 6.55, 6.86, 7.17, 7.5, 7.89, 8.28, 8.67, 9.06],
     200: [6.59, 6.92, 7.23, 7.54, 7.86, 8.17, 8.5, 8.81, 9.2, 9.59, 9.98, 10.37],
@@ -83,31 +89,33 @@ function calculatePrice(girth = 1, bends = 1, length) {
     1000: [22.2, 22.51, 22.84, 23.15, 23.46, 23.78, 24.1, 24.41, 24.8, 25.19, 25.58, 25.97],
     1100: [23.85, 24.16, 24.48, 24.8, 25.11, 25.44, 25.75, 26.06, 26.45, 26.84, 27.23, 27.62],
     1200: [25.48, 25.79, 26.1, 26.42, 26.74, 27.06, 27.37, 27.68, 28.07, 28.46, 28.85, 29.24],
-  }
-  let multiplier;
-  if (girth <= 100) {
-    multiplier = priceMatrix[100][bends];
+  };
+
+  if (bends === 0 && length === 0) {
+    return 0;
+  } else if (girth <= 100) {
+    return priceMatrix[100][bends];
   } else if (girth <= 200) {
-    multiplier = priceMatrix[200][bends];
+    return priceMatrix[200][bends];
   } else if (girth <= 300) {
-    multiplier = priceMatrix[300][bends];
+    return priceMatrix[300][bends];
   } else if (girth <= 400) {
-    multiplier = priceMatrix[400][bends];
+    return priceMatrix[400][bends];
   } else if (girth <= 500) {
-    multiplier = priceMatrix[500][bends];
+    return priceMatrix[500][bends];
   } else if (girth <= 600) {
-    multiplier = priceMatrix[600][bends];
+    return priceMatrix[600][bends];
   } else if (girth <= 700) {
-    multiplier = priceMatrix[700][bends];
+    return priceMatrix[700][bends];
   } else if (girth <= 800) {
-    multiplier = priceMatrix[800][bends];
+    return priceMatrix[800][bends];
   } else if (girth <= 900) {
-    multiplier = priceMatrix[900][bends];
+    return priceMatrix[900][bends];
   } else if (girth <= 1000) {
-    multiplier = priceMatrix[1000][bends];
+    return priceMatrix[1000][bends];
   } else if (girth <= 1100) {
-    multiplier = priceMatrix[1100][bends];
+    return priceMatrix[1100][bends];
   } else if (girth <= 1200) {
-    multiplier = priceMatrix[1200][bends];
+    return priceMatrix[1200][bends];
   }
 }
