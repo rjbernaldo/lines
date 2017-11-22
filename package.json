@@ -8,7 +8,6 @@
     "dev": "webpack-dev-server --hot --content-base dist/",
     "clean": "rimraf dist",
     "build": "npm run clean && NODE_ENV=production ./node_modules/webpack/bin/webpack.js",
-    "start": "NODE_ENV=production npm run build && ./node_modules/babel-cli/bin/babel-node.js .",
     "now": "npm run build && now ./dist --public"
   },
   "repository": {
