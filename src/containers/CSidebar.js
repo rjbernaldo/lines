@@ -73,5 +73,5 @@ function calculateLength(c, n) {
   const a = c.x - n.x;
   const b = c.y - n.y;
 
-  return parseInt(Math.sqrt(a*a + b*b));
+  return parseInt(Math.sqrt(a*a + b*b), 10);
 }

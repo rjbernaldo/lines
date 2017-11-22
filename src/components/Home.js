@@ -9,10 +9,6 @@ import CDrawing from '../containers/CDrawing';
 import CModal from '../containers/CModal';
 
 class Home extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     const { openModal, closeModal } = this.props;
     const style = { padding: '0px', margin: '0px', marginBottom: '5px', WebkitUserSelect: 'none' };

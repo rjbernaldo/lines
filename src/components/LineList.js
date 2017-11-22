@@ -12,6 +12,10 @@ class LineList extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
+  handleClick() {
+    console.log('line');
+  }
+
   renderLines(line, i) {
     const { points } = this.props;
     const currentId = line[0];
@@ -25,7 +29,7 @@ class LineList extends React.Component {
 
       return (
         <GBox pad="none" style={{ paddingBottom: '5px' }} key={i}>
-          <GButton 
+          <GButton
             style={{ paddingBottom: '5px' }}
             onClick={this.handleClick}
             label={label}
@@ -35,10 +39,6 @@ class LineList extends React.Component {
     }
 
     return null;
-  }
-
-  handleClick() {
-    console.log('line');
   }
 
   render() {
@@ -60,7 +60,7 @@ function calculateLength(c, n) {
   const a = c.x - n.x;
   const b = c.y - n.y;
 
-  return parseInt(Math.sqrt(a*a + b*b));
+  return parseInt(Math.sqrt(a*a + b*b), 10);
 }
 
 function generateLines(points) {

@@ -3,10 +3,6 @@ import React, { Component } from 'react';
 import GLayer from 'grommet/components/Layer';
 
 class Modal extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     const { closeModal } = this.props;
     document.addEventListener('keyup', (e) => {

@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 
 import GBox from 'grommet/components/Box';
 
+import {
+  calculateDegrees,
+  calculateQuadrant,
+  calculateLength,
+  calculateMidPoint,
+  calculateNewLengthCoordinates,
+} from '../../utils/calculations';
+
 class Line extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +36,6 @@ class Line extends React.Component {
   }
 
   handleRightClick(e) {
-    console.log('ondblclick');
     e.preventDefault();
 
     const { openModal, current, next } = this.props;
@@ -68,7 +75,7 @@ class Line extends React.Component {
     if (isNaN(this.state.tempInput)) {
       alert('Please enter a valid integer.');
     } else {
-      const reducedLength = parseInt(this.state.tempInput);
+      const reducedLength = parseInt(this.state.tempInput, 10);
 
       this.setState({
         tempInput: null,
@@ -78,7 +85,12 @@ class Line extends React.Component {
         const c = next;
         const angle = calculateDegrees(a, b, c);
         const quadrant = calculateQuadrant(b, c);
-        const coords = calculateNewCoordinates({ current, next }, angle, reducedLength, quadrant);
+        const coords = calculateNewLengthCoordinates(
+          { current, next },
+          angle,
+          reducedLength,
+          quadrant,
+        );
 
         modifyPoint(coords.x, coords.y);
         closeModal();
@@ -115,32 +127,10 @@ class Line extends React.Component {
           { calculateLength(current, next) }
         </text>
       );
-    } else {
-      //    text = (
-      //      <foreignObject
-      //        x={mid.x - 25}
-      //        y={mid.y - 25}
-      //        fontFamily="sans-serif"
-      //        fontSize="12px"
-      //        stroke="none"
-      //        fill="black"
-      //      >
-      //        <form
-      //          onSubmit={this.handleSubmit}
-      //        >
-      //          <input
-      //            onChange={this.handleChange}
-      //            ref={(input) => { if (input) input.focus(); }}
-      //            style={{ padding: '0px' }}
-      //          />
-      //        </form>
-      //      </foreignObject>
-      //    );
     }
-
     const stroke = this.state.hover && this.props.mode === 'SELECT'
-        ? 'blue'
-        : 'black';
+      ? 'blue'
+      : 'black';
 
     return (
       <g>
@@ -159,86 +149,6 @@ class Line extends React.Component {
       </g>
     );
   }
-};
+}
 
 export default Line;
-
-function calculateLength(c, n) {
-  const a = c.x - n.x;
-  const b = c.y - n.y;
-
-  return parseInt(Math.sqrt(a*a + b*b));
-}
-
-function calculateMidPoint(c, n) {
-  const a = c.x + n.x;
-  const b = c.y + n.y;
-
-  return {
-    x: parseInt(a/2),
-    y: parseInt(b/2),
-  };
-}
-
-function calculateNewCoordinates(origin, angle, length, quadrant, modifiedLength) {
-  const { current, next } = origin;
-  let x;
-  let y;
-  const finalLength = modifiedLength || length;
-
-  switch (quadrant) {
-    case 1:
-    case 2: {
-      x = current.x + (Math.cos((angle * Math.PI)/180) * finalLength);
-      y = current.y - (Math.sin((angle * Math.PI)/180) * finalLength);
-      break;
-    }
-    case 3:
-    case 4: {
-      x = current.x + (Math.cos((angle * Math.PI)/180) * finalLength);
-      y = current.y + (Math.sin((angle * Math.PI)/180) * finalLength);
-      break;
-    }
-    default: {
-      console.log('error', quadrant);
-      break;
-    }
-  }
-
-  if (current.x === next.x) x = current.x;
-  if (current.y === next.y) y = current.y;
-
-  const result = { x, y };
-  const newLength = calculateLength(current, result);
-
-  if (newLength < length) {
-    const l = finalLength + 0.01;
-    return calculateNewCoordinates(origin, angle, length, quadrant, l);
-  } else if (newLength > length) {
-    const l = finalLength - 0.01;
-    return calculateNewCoordinates(origin, angle, length, quadrant, l);
-  }
-
-  return result;
-}
-
-function calculateDegrees(A, B, C) {
-  if (A && B && C) {
-    const AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
-    const BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
-    const AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
-    const angle = Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
-    return Math.floor(angle * 180 / Math.PI);
-  }
-
-  return null;
-}
-
-function calculateQuadrant(c, n) {
-  if (c.x <= n.x && c.y > n.y) return 1;
-  if (c.x > n.x && c.y > n.y) return 2;
-  if (c.x > n.x && c.y <= n.y) return 3;
-  if (c.x <= n.x && c.y <= n.y) return 4;
-
-  return 0;
-}

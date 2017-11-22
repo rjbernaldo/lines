@@ -3,6 +3,11 @@ import React, { Component } from 'react';
 import Anchor from './Anchor';
 import Line from './Line';
 
+import {
+  calculateDegrees,
+  calculateNewCoords,
+}  from '../../utils/calculations';
+
 class Drawing extends React.Component {
   constructor(props) {
     super(props);
@@ -61,8 +66,6 @@ class Drawing extends React.Component {
       e.target.ondblclick = () => {
         this.endDraw();
       };
-    } else if (e.target.tagName === 'text') {
-      // console.log('click!');
     }
   }
 
@@ -70,7 +73,7 @@ class Drawing extends React.Component {
     return (e) => {
       if (e.nativeEvent.which === 3) return;
 
-      const { mode, points, modifyPoint } = this.props;
+      const { mode } = this.props;
       const selectMode = mode === 'SELECT';
 
       const { x, y } = this.calculateCoords(e);
@@ -179,7 +182,6 @@ class Drawing extends React.Component {
         }
       } else if (e.target.tagName === 'text') {
         this.endDraw();
-        // console.log('click!');
       } else {
         this.addPoint(
           this.calculateCoords(e),
@@ -245,8 +247,16 @@ class Drawing extends React.Component {
   }
 
   renderAnchors(k, i) {
-    const { deletePoints, mode, modifyPoint, modifyDegrees, openModal, closeModal, setDraw, endDraw } = this.props;
-    let points = this.props.points;
+    const {
+      deletePoints,
+      mode,
+      modifyPoint,
+      openModal,
+      closeModal,
+      setDraw,
+    } = this.props;
+
+    const points = this.props.points;
     const { id, x, y, connections } = points[k];
     const handleMouseDown = this.anchorMouseDown(id);
     const nextId = connections[1];
@@ -264,7 +274,6 @@ class Drawing extends React.Component {
     const deleteAnchor = (e) => {
       e.preventDefault();
 
-      const { mode } = this.props;
       if (mode === 'SELECT') deletePoints([id]);
     };
 
@@ -471,54 +480,6 @@ function traversePoints(points, set, a, b, c, cb) {
 
 export default Drawing;
 
-function calculateNewCoords(a, b, c, modifiedAngle, compensatedAngle) {
-  const baseAngle = calculateDegrees(a, b, c);
-
-  let newAngle = baseAngle - (compensatedAngle || modifiedAngle);
-
-  const foo = (Math.atan2(a.y - b.y, a.x - b.x) * 180 / Math.PI + 180);
-  const bar = (Math.atan2(c.y - b.y, c.x - b.x) * 180 / Math.PI + 180);
-  const result = bar - foo;
-
-  if (result <= 90 && result > 0) {
-  } else if (result <= 180 && result > 90) {
-  } else if (result >= -90 && result < 0) {
-    newAngle = 0 - newAngle;
-  } else if (result >= -180 && result < -90) {
-    newAngle = 0 - newAngle;
-  } else if (result >= -270 && result < -180) {
-  } else {
-    newAngle = 0 - newAngle;
-  }
-
-  const newCoords = rotate(b.x, b.y, c.x, c.y, newAngle);
-
-  return newCoords;
-}
-
-function calculateDegrees(A, B, C) {
-  if (A && B && C) {
-    const AB = Math.sqrt(Math.pow(B.x-A.x,2)+ Math.pow(B.y-A.y,2));    
-    const BC = Math.sqrt(Math.pow(B.x-C.x,2)+ Math.pow(B.y-C.y,2)); 
-    const AC = Math.sqrt(Math.pow(C.x-A.x,2)+ Math.pow(C.y-A.y,2));
-    const angle = Math.acos((BC*BC+AB*AB-AC*AC)/(2*BC*AB));
-    const degrees = Math.floor(angle * 180 / Math.PI);
-
-    return degrees;
-  }
-
-  return null;
-}
-
-function rotate(cx, cy, nx, ny, angle) {
-  const radians = (Math.PI / 180) * angle;
-  const cos = Math.cos(radians);
-  const sin = Math.sin(radians);
-  let x = (cos * (nx - cx)) + (sin * (ny - cy)) + cx;
-  let y = (cos * (ny - cy)) - (sin * (nx - cx)) + cy;
-
-  return { x, y };
-}
 
 function modifyPoints(modifyPoint, points, current, diff, set = {}) {
   const nextId = current.connections && current.connections[1];
@@ -579,11 +540,4 @@ function generateLines(points) {
   });
 
   return lines;
-}
-
-function calculateLength(c, n) {
-  const a = c.x - n.x;
-  const b = c.y - n.y;
-
-  return parseInt(Math.sqrt(a*a + b*b));
 }
